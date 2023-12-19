@@ -1,8 +1,12 @@
 <?php
 include 'layout/header.php';
 ?>
+<link rel="stylesheet" type="text/css" href="css/stle.css">
 <div class="container">
-    <form id="loginForm">
+    <div>
+        <img src="images\pictaker (1).png" alt="logo" width="150px">
+    </div>
+    <form id="loginForm">       
         <h2>Login</h2>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
