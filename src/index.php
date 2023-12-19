@@ -1,5 +1,5 @@
 <?php
-include 'layout/header.php';
+include 'layouts/header.php';
 ?>
 <div class="container">
     <form id="loginForm">
@@ -16,7 +16,7 @@ include 'layout/header.php';
 </div>
 
 <?php
-include 'layout/footer.php';
+include 'layouts/footer.php';
 ?>
 
 <script>
@@ -31,7 +31,7 @@ include 'layout/footer.php';
         };
 
         // Make a POST request to the login endpoint
-        fetch('./auth/api.php?login', {
+        fetch('./auth/api.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
