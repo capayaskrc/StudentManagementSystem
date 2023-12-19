@@ -1,15 +1,6 @@
 <?php
+include 'layout/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
 <div class="container">
     <form id="loginForm">
         <h2>Login</h2>
@@ -24,9 +15,9 @@
     <p id="errorMessage"></p>
 </div>
 
-<script src="scripts.js"></script>
-</body>
-</html>
+<?php
+include 'layout/footer.php';
+?>
 
 <script>
     function login() {
@@ -61,13 +52,13 @@
                     var role = responseData.role;
                     switch (role) {
                         case 'student':
-                            window.location.href = 'student_dashboard';
+                            window.location.href = 'student/student_dashboard.php';
                             break;
                         case 'teacher':
-                            window.location.href = 'teacher_dashboard';
+                            window.location.href = 'teacher/teacher_dashboard.php';
                             break;
                         case 'admin':
-                            window.location.href = 'admin_dashboard';
+                            window.location.href = 'admin/admin_dashboard.php';
                             break;
                         default:
                             console.error('Invalid user role');
