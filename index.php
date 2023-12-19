@@ -51,6 +51,8 @@ include 'layout/footer.php';
             .then(responseData => {
                 // Check if responseData has the expected structure
                 if (responseData && responseData.token) {
+                    // Store user information in the session
+                    sessionStorage.setItem('user', JSON.stringify(responseData.user));
                     // Handle the successful response, e.g., redirect to dashboard
                     console.log('Login successful:', responseData);
                     var role = responseData.role;
