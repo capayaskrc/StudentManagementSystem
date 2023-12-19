@@ -53,7 +53,6 @@ $request_method = $_SERVER['REQUEST_METHOD'];
                 echo json_encode(["error" => "Invalid request"]);
             }
             break;
-            break;
         default:
             http_response_code(405);
             echo json_encode(["error" => "Invalid request method"]);
