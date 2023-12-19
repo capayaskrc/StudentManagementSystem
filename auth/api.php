@@ -66,7 +66,9 @@ function handle_login() {
     $password = $data['password'];
 
     // Fetch the user from the database based on the username
-    $sql = "SELECT UserID, Password, RoleID FROM USER WHERE Username = ?";
+    $sql = "SELECT User.UserID, User.RoleID, User.Password, Role.RoleName FROM User 
+            JOIN Role ON User.RoleID = Role.RoleID 
+            WHERE User.Username = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -83,7 +85,12 @@ function handle_login() {
                 $_SESSION['role'] = $row['RoleID'];
 
                 $token = session_id();
-                echo json_encode(["token" => $token, "message" => "Login successful"]);
+                $response = [
+                    "token" => $token,
+                    "role" => $row['RoleName'],
+                    "message" => "Login successful"
+                ];
+                echo json_encode($response);
             } else {
                 // Password is incorrect
                 http_response_code(401); // Unauthorized
@@ -100,6 +107,8 @@ function handle_login() {
     }
     $stmt->close();
 }
+
+
 function authenticate_user() {
     if (!isset($_SESSION['user_id'])) {
         http_response_code(401); // Unauthorized
@@ -200,7 +209,7 @@ function handle_teacher_dashboard() {
 }
 
 
-function handle_admin_dashboard() {
+function    handle_admin_dashboard() {
     global $conn;
 
     // Fetch admin details

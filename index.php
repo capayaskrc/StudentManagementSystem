@@ -58,7 +58,20 @@
                 if (responseData && responseData.token) {
                     // Handle the successful response, e.g., redirect to dashboard
                     console.log('Login successful:', responseData);
-                    window.location.href = 'dashboard.php';
+                    var role = responseData.role;
+                    switch (role) {
+                        case 'student':
+                            window.location.href = 'student_dashboard';
+                            break;
+                        case 'teacher':
+                            window.location.href = 'teacher_dashboard';
+                            break;
+                        case 'admin':
+                            window.location.href = 'admin_dashboard';
+                            break;
+                        default:
+                            console.error('Invalid user role');
+                    }
                 } else {
                     // Unexpected response format
                     throw new Error('Unexpected response format');
