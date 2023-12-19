@@ -3,7 +3,7 @@
 ### NOTES
     * In getting the data in api use the following js:
        NOTE: change the login to specific function you need
-        fetch('./auth/api.php/login', {
+        fetch('./auth/api.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
