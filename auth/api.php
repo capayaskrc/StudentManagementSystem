@@ -66,7 +66,7 @@ function handle_login() {
     $password = $data['password'];
 
     // Fetch the user from the database based on the username
-    $sql = "SELECT * FROM USER WHERE Username = ?";
+    $sql = "SELECT UserID, Password, RoleID FROM USER WHERE Username = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -76,23 +76,23 @@ function handle_login() {
         if ($result->num_rows == 1) {
             $row = $result->fetch_assoc();
 
-            // Verify the password using bcrypt
+            // Verify the password using MD5
             if (md5($password) === $row['Password']) {
-                // Password is correct (MD5 hash)
+                // Password is correct
                 $_SESSION['user_id'] = $row['UserID'];
                 $_SESSION['role'] = $row['RoleID'];
 
                 $token = session_id();
-                echo json_encode(["token" => $token]);
+                echo json_encode(["token" => $token, "message" => "Login successful"]);
             } else {
                 // Password is incorrect
                 http_response_code(401); // Unauthorized
-                echo json_encode(["error" => "Password is incorrect"]);
+                echo json_encode(["error" => "Invalid credentials"]);
             }
         } else {
             // User not found
             http_response_code(401); // Unauthorized
-            echo json_encode(["error" => "User not found"]);
+            echo json_encode(["error" => "Invalid credentials"]);
         }
     } else {
         http_response_code(500); // Internal Server Error
@@ -100,9 +100,6 @@ function handle_login() {
     }
     $stmt->close();
 }
-
-
-
 function authenticate_user() {
     if (!isset($_SESSION['user_id'])) {
         http_response_code(401); // Unauthorized

@@ -54,9 +54,15 @@
                 return response.json();
             })
             .then(responseData => {
-                // Handle the successful response, e.g., redirect to dashboard
-                console.log('Login successful:', responseData);
-                window.location.href = 'dashboard.php';
+                // Check if responseData has the expected structure
+                if (responseData && responseData.token) {
+                    // Handle the successful response, e.g., redirect to dashboard
+                    console.log('Login successful:', responseData);
+                    window.location.href = 'dashboard.php';
+                } else {
+                    // Unexpected response format
+                    throw new Error('Unexpected response format');
+                }
             })
             .catch(error => {
                 // Handle errors, e.g., display an error message
@@ -64,4 +70,5 @@
                 document.getElementById('errorMessage').innerText = error.message;
             });
     }
+
 </script>
