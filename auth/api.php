@@ -45,11 +45,14 @@ $request_method = $_SERVER['REQUEST_METHOD'];
             authenticate_user();
 
             if (isset($_GET['user']) && isset($_GET['userID'])) {
-                handle_update_user($_GET['userID']);
+                handle_update_user($_GET['userId']);
+            } elseif (isset($_GET['password'])) {
+                handle_update_password();
             } else {
                 http_response_code(400);
                 echo json_encode(["error" => "Invalid request"]);
             }
+            break;
             break;
         default:
             http_response_code(405);
@@ -106,17 +109,27 @@ $request_method = $_SERVER['REQUEST_METHOD'];
     $stmt->close();
 }
 
-
-function authenticate_user() {
-    if (!isset($_SESSION['user_id'])) {
-        http_response_code(401); // Unauthorized
-        echo json_encode(["error" => "Unauthorized"]);
-        exit();
+    function authenticate_user() {
+        if (!isset($_SESSION['user_id'])) {
+            http_response_code(401); // Unauthorized
+            echo json_encode(["error" => "Unauthorized"]);
+            exit();
+        }
     }
-}
 
     function handle_add_user() {
         global $conn;
+
+        // Check if the user making the request is an admin or teacher
+        // $allowedRoles = ['admin', 'teacher'];
+        // $userRole = $_SESSION['role'];
+
+        // Uncomment the code below if you want to restrict access based on roles
+        // if (!in_array($userRole, $allowedRoles)) {
+        //     http_response_code(403); // Forbidden
+        //     echo json_encode(["error" => "Unauthorized access"]);
+        //     exit();
+        // }
 
         // Get the data from the request body
         $data = json_decode(file_get_contents("php://input"), true);
@@ -128,6 +141,20 @@ function authenticate_user() {
         $sex = mysqli_real_escape_string($conn, $data['sex']);
         $username = mysqli_real_escape_string($conn, $data['username']);
         $roleName = mysqli_real_escape_string($conn, $data['role']);
+
+        // Check if the user with the same name and birthdate already exists
+        $sqlCheckUser = "SELECT UserID FROM user WHERE FullName = ? AND Birthdate = ?";
+        $stmtCheckUser = $conn->prepare($sqlCheckUser);
+        $stmtCheckUser->bind_param("ss", $fullName, $birthdate);
+        $stmtCheckUser->execute();
+        $resultCheckUser = $stmtCheckUser->get_result();
+
+        if ($resultCheckUser && $resultCheckUser->num_rows > 0) {
+            // User with the same name and birthdate already exists
+            http_response_code(400); // Bad Request
+            echo json_encode(["error" => "User with the same name already exists"]);
+            exit();
+        }
 
         // Fetch the corresponding RoleID from the "role" table
         $sqlRole = "SELECT RoleID FROM role WHERE RoleName = ?";
@@ -158,45 +185,91 @@ function authenticate_user() {
             echo json_encode(["error" => "Invalid role"]);
         }
 
-        // Close the role statement
+        // Close the role and check user statements
         $stmtRole->close();
+        $stmtCheckUser->close();
     }
+
+    function handle_enrollment() {
+        global $conn;
+
+        // Check if the user making the request is a teacher or admin
+//        $allowedRoles = ['teacher', 'admin'];
+//        $userRole = $_SESSION['role'];
+//
+//        if (!in_array($userRole, $allowedRoles)) {
+//            http_response_code(403); // Forbidden
+//            echo json_encode(["error" => "Unauthorized access"]);
+//            exit();
+//        }
+
+        // Get the enrollment data from the request body
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        // Validate and sanitize the input data (customize based on your requirements)
+        $studentId = mysqli_real_escape_string($conn, $data['student_id']);
+        $courseId = mysqli_real_escape_string($conn, $data['course_id']);
+
+        // Check if the student is already enrolled in the course
+        $checkEnrollmentSql = "SELECT * FROM Enrollment WHERE StudentID = $studentId AND CourseID = $courseId";
+        $checkEnrollmentResult = $conn->query($checkEnrollmentSql);
+
+        if ($checkEnrollmentResult->num_rows > 0) {
+            http_response_code(400);
+            echo json_encode(["error" => "Student is already enrolled in the course"]);
+            exit();
+        }
+
+        // Enroll the student in the course
+        $enrollmentSql = "INSERT INTO Enrollment (StudentID, CourseID, DateEnrolled)
+                          VALUES ($studentId, $courseId, NOW())";
+
+        if ($conn->query($enrollmentSql)) {
+            http_response_code(200);
+            echo json_encode(["message" => "Enrollment successful"]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["error" => "Error enrolling student in the course"]);
+        }
+    }
+
+
 
 
 function handle_student_dashboard() {
-    global $conn;
+        global $conn;
 
-    // Fetch student details
-    $userId = $_SESSION['user_id'];
-    $sql = "SELECT * FROM users WHERE id = $userId";
-    $result = $conn->query($sql);
+        // Fetch student details
+        $userId = $_SESSION['user_id'];
+        $sql = "SELECT * FROM users WHERE id = $userId";
+        $result = $conn->query($sql);
 
-    if ($result->num_rows == 1) {
-        $student = $result->fetch_assoc();
+        if ($result->num_rows == 1) {
+            $student = $result->fetch_assoc();
 
-        // Fetch enrolled courses and grades
-        $sqlCourses = "SELECT Course.CourseName, Enrollment.DateEnrolled, Performance.Grade
-                       FROM Enrollment
-                       JOIN Course ON Enrollment.CourseID = Course.CourseID
-                       JOIN Performance ON Enrollment.EnrollmentID = Performance.EnrollmentID
-                       WHERE Enrollment.StudentID = $userId";
+            // Fetch enrolled courses and grades
+            $sqlCourses = "SELECT Course.CourseName, Enrollment.DateEnrolled, Performance.Grade
+                           FROM Enrollment
+                           JOIN Course ON Enrollment.CourseID = Course.CourseID
+                           JOIN Performance ON Enrollment.EnrollmentID = Performance.EnrollmentID
+                           WHERE Enrollment.StudentID = $userId";
 
-        $resultCourses = $conn->query($sqlCourses);
+            $resultCourses = $conn->query($sqlCourses);
 
-        if ($resultCourses->num_rows > 0) {
-            $courses = [];
-            while ($row = $resultCourses->fetch_assoc()) {
-                $courses[] = $row;
+            if ($resultCourses->num_rows > 0) {
+                $courses = [];
+                while ($row = $resultCourses->fetch_assoc()) {
+                    $courses[] = $row;
+                }
+                $student['courses'] = $courses;
             }
-            $student['courses'] = $courses;
-        }
 
-        echo json_encode($student);
-    } else {
-        http_response_code(404); // Not Found
-        echo json_encode(["error" => "Student not found"]);
+            echo json_encode($student);
+        } else {
+            http_response_code(404); // Not Found
+            echo json_encode(["error" => "Student not found"]);
+        }
     }
-}
 
 
 function handle_teacher_dashboard() {
@@ -340,79 +413,68 @@ function handle_update_user($userId) {
     }
 }
 
+    function handle_performance() {
+        global $conn;
 
-function handle_enrollment() {
-    global $conn;
+        if ($_SESSION['role'] !== 'teacher') {
+            http_response_code(403);
+            echo json_encode(["error" => "Unauthorized access"]);
+            exit();
+        }
 
-    // Check if the user making the request is a student
-    if ($_SESSION['role'] !== 'student') {
-        http_response_code(403); // Forbidden
-        echo json_encode(["error" => "Unauthorized access"]);
-        exit();
+        $data = json_decode(file_get_contents("php://input"), true);
+        $enrollmentId = mysqli_real_escape_string($conn, $data['enrollment_id']);
+        $grade = mysqli_real_escape_string($conn, $data['grade']);
+
+        // Check if the enrollment exists
+        $checkEnrollmentSql = "SELECT * FROM Enrollment WHERE EnrollmentID = $enrollmentId";
+        $checkEnrollmentResult = $conn->query($checkEnrollmentSql);
+
+        if ($checkEnrollmentResult->num_rows !== 1) {
+            http_response_code(400); // Bad Request
+            echo json_encode(["error" => "Invalid enrollment ID"]);
+            exit();
+        }
+
+        $updateGradeSql = "UPDATE Performance SET Grade = $grade WHERE EnrollmentID = $enrollmentId";
+
+        if ($conn->query($updateGradeSql)) {
+            http_response_code(200);
+            echo json_encode(["message" => "Grade entry successful"]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["error" => "Error entering grade"]);
+        }
     }
 
-    // Get the enrollment data from the request body
-    $data = json_decode(file_get_contents("php://input"), true);
+    function handle_update_password() {
+        global $conn;
 
-    // Validate and sanitize the input data (customize based on your requirements)
-    $studentId = $_SESSION['user_id'];
-    $courseId = mysqli_real_escape_string($conn, $data['course_id']);
+        // Check if the user making the request is authenticated
+        authenticate_user();
 
-    // Check if the student is already enrolled in the course
-    $checkEnrollmentSql = "SELECT * FROM Enrollment WHERE StudentID = $studentId AND CourseID = $courseId";
-    $checkEnrollmentResult = $conn->query($checkEnrollmentSql);
+        // Get the user ID from the session
+        $userId = $_SESSION['user_id'];
 
-    if ($checkEnrollmentResult->num_rows > 0) {
-        http_response_code(400);
-        echo json_encode(["error" => "Student is already enrolled in the course"]);
-        exit();
+        // Get the new password from the request body
+        $data = json_decode(file_get_contents("php://input"), true);
+        $newPassword = mysqli_real_escape_string($conn, $data['new_password']);
+
+        // Update the user's password in the database
+        $hashedPassword = md5($newPassword); // You may want to use a stronger hashing algorithm
+        $updatePasswordSql = "UPDATE User SET Password = ? WHERE UserID = ?";
+        $stmt = $conn->prepare($updatePasswordSql);
+        $stmt->bind_param("si", $hashedPassword, $userId);
+
+        if ($stmt->execute()) {
+            http_response_code(200); // OK
+            echo json_encode(["message" => "Password updated successfully"]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Error updating password"]);
+        }
+
+        $stmt->close();
     }
 
-    // Enroll the student in the course
-    $enrollmentSql = "INSERT INTO Enrollment (StudentID, CourseID, DateEnrolled)
-                      VALUES ($studentId, $courseId, NOW())";
-
-    if ($conn->query($enrollmentSql)) {
-        http_response_code(200);
-        echo json_encode(["message" => "Enrollment successful"]);
-    } else {
-        http_response_code(500);
-        echo json_encode(["error" => "Error enrolling student in the course"]);
-    }
-}
-
-
-function handle_performance() {
-    global $conn;
-
-    if ($_SESSION['role'] !== 'teacher') {
-        http_response_code(403);
-        echo json_encode(["error" => "Unauthorized access"]);
-        exit();
-    }
-
-    $data = json_decode(file_get_contents("php://input"), true);
-    $enrollmentId = mysqli_real_escape_string($conn, $data['enrollment_id']);
-    $grade = mysqli_real_escape_string($conn, $data['grade']);
-
-    // Check if the enrollment exists
-    $checkEnrollmentSql = "SELECT * FROM Enrollment WHERE EnrollmentID = $enrollmentId";
-    $checkEnrollmentResult = $conn->query($checkEnrollmentSql);
-
-    if ($checkEnrollmentResult->num_rows !== 1) {
-        http_response_code(400); // Bad Request
-        echo json_encode(["error" => "Invalid enrollment ID"]);
-        exit();
-    }
-
-    $updateGradeSql = "UPDATE Performance SET Grade = $grade WHERE EnrollmentID = $enrollmentId";
-
-    if ($conn->query($updateGradeSql)) {
-        http_response_code(200);
-        echo json_encode(["message" => "Grade entry successful"]);
-    } else {
-        http_response_code(500);
-        echo json_encode(["error" => "Error entering grade"]);
-    }
-}
 ?>
