@@ -6,59 +6,57 @@ require_once 'db_connection.php';
 
 $request_method = $_SERVER['REQUEST_METHOD'];
 
-switch ($request_method) {
-    case 'POST':
-        // Handle login
-        handle_login();
-        break;
-    case 'GET':
-        authenticate_user();
-
-        if (isset($_GET['dashboard'])) {
-            switch ($_SESSION['role']) {
-                case 'student':
-                    handle_student_dashboard();
-                    break;
-                case 'teacher':
-                    handle_teacher_dashboard();
-                    break;
-                case 'admin':
-                    handle_admin_dashboard();
-                    break;
-                default:
-                    http_response_code(403);
-                    echo json_encode(["error" => "Invalid user role"]);
+    switch ($request_method) {
+        case 'POST':
+            if (isset($_GET['login'])) {
+                handle_login();
+            } elseif (isset($_GET['enrollment'])) {
+                handle_enrollment();
+            } elseif (isset($_GET['performance'])) {
+                handle_performance();
+            } elseif (isset($_GET['user'])) {
+                handle_add_user();
+            } else {
+                http_response_code(400);
+                echo json_encode(["error" => "Invalid request"]);
             }
-        }
-        break;
-    case 'PUT':
-        authenticate_user();
+            break;
+        case 'GET':
+            authenticate_user();
 
-        if (isset($_GET['user']) && isset($_GET['userID'])) {
-            handle_update_user($_GET['userId']);
-        } else {
-            http_response_code(400);
-            echo json_encode(["error" => "Invalid request"]);
-        }
-        break;
-    case 'POST':
-        authenticate_user();
+            if (isset($_GET['dashboard'])) {
+                switch ($_SESSION['role']) {
+                    case 'student':
+                        handle_student_dashboard();
+                        break;
+                    case 'teacher':
+                        handle_teacher_dashboard();
+                        break;
+                    case 'admin':
+                        handle_admin_dashboard();
+                        break;
+                    default:
+                        http_response_code(403);
+                        echo json_encode(["error" => "Invalid user role"]);
+                }
+            }
+            break;
+        case 'PUT':
+            authenticate_user();
 
-        if (isset($_GET['enrollment'])) {
-            handle_enrollment();
-        } elseif (isset($_GET['performance'])) {
-            handle_performance();
-        } else {
-            http_response_code(400);
-            echo json_encode(["error" => "Invalid request"]);
-        }
-        break;
-    default:
-        http_response_code(405);
-        echo json_encode(["error" => "Invalid request method"]);
-}
+            if (isset($_GET['user']) && isset($_GET['userID'])) {
+                handle_update_user($_GET['userID']);
+            } else {
+                http_response_code(400);
+                echo json_encode(["error" => "Invalid request"]);
+            }
+            break;
+        default:
+            http_response_code(405);
+            echo json_encode(["error" => "Invalid request method"]);
+    }
 
-function handle_login() {
+    function handle_login() {
     global $conn;
     $data = json_decode(file_get_contents("php://input"), true);
 
@@ -116,6 +114,54 @@ function authenticate_user() {
         exit();
     }
 }
+
+    function handle_add_user() {
+        global $conn;
+
+        // Get the data from the request body
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        // Extract user information
+        $fullName = mysqli_real_escape_string($conn, $data['full_name']);
+        $birthdate = mysqli_real_escape_string($conn, $data['birthdate']);
+        $address = mysqli_real_escape_string($conn, $data['address']);
+        $sex = mysqli_real_escape_string($conn, $data['sex']);
+        $username = mysqli_real_escape_string($conn, $data['username']);
+        $roleName = mysqli_real_escape_string($conn, $data['role']);
+
+        // Fetch the corresponding RoleID from the "role" table
+        $sqlRole = "SELECT RoleID FROM role WHERE RoleName = ?";
+        $stmtRole = $conn->prepare($sqlRole);
+        $stmtRole->bind_param("s", $roleName);
+        $stmtRole->execute();
+        $resultRole = $stmtRole->get_result();
+
+        if ($resultRole && $resultRole->num_rows == 1) {
+            // Role found, get the RoleID
+            $rowRole = $resultRole->fetch_assoc();
+            $roleId = $rowRole['RoleID'];
+
+            // Insert the user into the "user" table
+            $sqlInsertUser = "INSERT INTO user (FullName, Birthdate, Address, Sex, Username, Password, RoleID)
+                              VALUES ('$fullName', '$birthdate', '$address', '$sex', '$username', MD5('default123'), $roleId)";
+
+            if ($conn->query($sqlInsertUser)) {
+                http_response_code(201); // Created
+                echo json_encode(["message" => "User added successfully"]);
+            } else {
+                http_response_code(500); // Internal Server Error
+                echo json_encode(["error" => "Error adding user to the database"]);
+            }
+        } else {
+            // Role not found
+            http_response_code(400); // Bad Request
+            echo json_encode(["error" => "Invalid role"]);
+        }
+
+        // Close the role statement
+        $stmtRole->close();
+    }
+
 
 function handle_student_dashboard() {
     global $conn;

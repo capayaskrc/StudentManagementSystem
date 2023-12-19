@@ -31,7 +31,7 @@ include 'layout/footer.php';
         };
 
         // Make a POST request to the login endpoint
-        fetch('./auth/api.php', {
+        fetch('./auth/api.php?login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
