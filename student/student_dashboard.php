@@ -1,8 +1,6 @@
 <?php
-include '../layout/header.php';
+include '../layout/header_student.php';
 ?>
-
-<link rel="stylesheet" href="student.css">
 
 <header>
     <h1>Welcome to your Dashboard!</h1>

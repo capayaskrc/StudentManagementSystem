@@ -1,5 +1,5 @@
 <?php
-include 'layout/header.php';
+include 'layout/header_index.php';
 ?>
 <div class="container">
     <div>
