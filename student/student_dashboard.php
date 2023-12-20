@@ -2,11 +2,29 @@
 include '../layout/header_student.php';
 ?>
 
-<header>
-    <h1>Welcome to your Dashboard!</h1>
+<header class="header">
+    <a class="title" href="">Dashboard</a>
+    <div class="logout">
+        <a href="logout.php" class="btn btn-primary">Logout</a>
+    </div>
 </header>
-<div class="container">
-    <p>This is the content of the student dashboard.</p>
-</div>
+
+<aside>
+    <ul>
+        <li>
+            <a href="">Enrolled Subjects</a>
+        </li>
+        <li>
+            <a href="">View Courses</a>
+        </li>
+    </ul>
+</aside>
+
+<div class="content">
+    <h1>Hello World</h1>
+    <p>In this example, we have added an accordion and a dropdown menu inside the side navigation.
+        Click on both to understand how they differ from each other. The accordion will push down the content, while the
+        dropdown lays over the content.</p>
+</body>
 
 <?php include '../layout/footer.php'; ?>

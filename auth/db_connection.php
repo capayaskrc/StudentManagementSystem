@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "student_management_system";
+$dbname = "sms_db";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

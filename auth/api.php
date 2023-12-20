@@ -66,9 +66,9 @@ $request_method = $_SERVER['REQUEST_METHOD'];
     $password = $data['password'];
 
     // Fetch the user from the database based on the username
-    $sql = "SELECT User.UserID, User.RoleID, User.Password, Role.RoleName FROM User 
-            JOIN Role ON User.RoleID = Role.RoleID 
-            WHERE User.Username = ?";
+    $sql = "SELECT User.user_id, User.role_id, User.password, Role.role_name FROM User 
+            JOIN Role ON User.role_id = Role.role_id 
+            WHERE User.username = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -79,15 +79,15 @@ $request_method = $_SERVER['REQUEST_METHOD'];
             $row = $result->fetch_assoc();
 
             // Verify the password using MD5
-            if (md5($password) === $row['Password']) {
+            if (md5($password) === $row['password']) {
                 // Password is correct
-                $_SESSION['user_id'] = $row['UserID'];
-                $_SESSION['role'] = $row['RoleID'];
+                $_SESSION['user_id'] = $row['user_id'];
+                $_SESSION['role'] = $row['role_id'];
 
                 $token = session_id();
                 $response = [
                     "token" => $token,
-                    "role" => $row['RoleName'],
+                    "role" => $row['role_name'],
                     "message" => "Login successful"
                 ];
                 echo json_encode($response);
@@ -142,7 +142,7 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         $roleName = mysqli_real_escape_string($conn, $data['role']);
 
         // Check if the user with the same name and birthdate already exists
-        $sqlCheckUser = "SELECT UserID FROM user WHERE FullName = ? AND Birthdate = ?";
+        $sqlCheckUser = "SELECT user_id FROM user WHERE fullname = ? AND birthdate = ?";
         $stmtCheckUser = $conn->prepare($sqlCheckUser);
         $stmtCheckUser->bind_param("ss", $fullName, $birthdate);
         $stmtCheckUser->execute();
@@ -156,7 +156,7 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         }
 
         // Fetch the corresponding RoleID from the "role" table
-        $sqlRole = "SELECT RoleID FROM role WHERE RoleName = ?";
+        $sqlRole = "SELECT role_id FROM role WHERE role_name = ?";
         $stmtRole = $conn->prepare($sqlRole);
         $stmtRole->bind_param("s", $roleName);
         $stmtRole->execute();
@@ -165,10 +165,10 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         if ($resultRole && $resultRole->num_rows == 1) {
             // Role found, get the RoleID
             $rowRole = $resultRole->fetch_assoc();
-            $roleId = $rowRole['RoleID'];
+            $roleId = $rowRole['role_id'];
 
             // Insert the user into the "user" table
-            $sqlInsertUser = "INSERT INTO user (FullName, Birthdate, Address, Sex, Username, Password, RoleID)
+            $sqlInsertUser = "INSERT INTO user (fullname, birthdate, address, sex, username, password, role_id)
                               VALUES ('$fullName', '$birthdate', '$address', '$sex', '$username', MD5('default123'), $roleId)";
 
             if ($conn->query($sqlInsertUser)) {
@@ -210,7 +210,7 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         $courseId = mysqli_real_escape_string($conn, $data['course_id']);
 
         // Check if the student is already enrolled in the course
-        $checkEnrollmentSql = "SELECT * FROM Enrollment WHERE StudentID = $studentId AND CourseID = $courseId";
+        $checkEnrollmentSql = "SELECT * FROM Enrollment WHERE student_id = $studentId AND course_id = $courseId";
         $checkEnrollmentResult = $conn->query($checkEnrollmentSql);
 
         if ($checkEnrollmentResult->num_rows > 0) {
@@ -220,7 +220,7 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         }
 
         // Enroll the student in the course
-        $enrollmentSql = "INSERT INTO Enrollment (StudentID, CourseID, DateEnrolled)
+        $enrollmentSql = "INSERT INTO Enrollment (student_id, course_id, date_enrolled)
                           VALUES ($studentId, $courseId, NOW())";
 
         if ($conn->query($enrollmentSql)) {
@@ -247,11 +247,11 @@ function handle_student_dashboard() {
             $student = $result->fetch_assoc();
 
             // Fetch enrolled courses and grades
-            $sqlCourses = "SELECT Course.CourseName, Enrollment.DateEnrolled, Performance.Grade
+            $sqlCourses = "SELECT Course.course_name, Enrollment.date_enrolled, Performance.grade
                            FROM Enrollment
-                           JOIN Course ON Enrollment.CourseID = Course.CourseID
-                           JOIN Performance ON Enrollment.EnrollmentID = Performance.EnrollmentID
-                           WHERE Enrollment.StudentID = $userId";
+                           JOIN Course ON Enrollment.course_id = Course.course_id
+                           JOIN Performance ON Enrollment.enrollment_id = Performance.enrollment_id
+                           WHERE Enrollment.student_id = $userId";
 
             $resultCourses = $conn->query($sqlCourses);
 
@@ -283,9 +283,9 @@ function handle_teacher_dashboard() {
         $teacher = $result->fetch_assoc();
 
         // Fetch courses taught by the teacher
-        $sqlCourses = "SELECT Course.CourseName, Course.CourseID
+        $sqlCourses = "SELECT Course.course_name, Course.course_id
                        FROM Course
-                       WHERE Course.UserID = $userId";
+                       WHERE Course.user_id = $userId";
 
         $resultCourses = $conn->query($sqlCourses);
 
@@ -298,11 +298,11 @@ function handle_teacher_dashboard() {
 
             // Fetch students enrolled in each course taught by the teacher
             foreach ($courses as &$course) {
-                $courseId = $course['CourseID'];
-                $sqlEnrollments = "SELECT User.FullName, Enrollment.DateEnrolled
+                $courseId = $course['course_id'];
+                $sqlEnrollments = "SELECT User.fullname, Enrollment.date_enrolled
                                    FROM Enrollment
-                                   JOIN User ON Enrollment.StudentID = User.UserID
-                                   WHERE Enrollment.CourseID = $courseId";
+                                   JOIN User ON Enrollment.student_id = User.user_id
+                                   WHERE Enrollment.course_id = $courseId";
 
                 $resultEnrollments = $conn->query($sqlEnrollments);
 
@@ -339,9 +339,9 @@ function    handle_admin_dashboard() {
         $admin = $result->fetch_assoc();
 
         // Fetch user management data
-        $sqlUsers = "SELECT User.UserID, User.FullName, User.RoleID, Role.RoleName
+        $sqlUsers = "SELECT User.user_id, User.fullname, User.role_id, Role.role_name
                      FROM User
-                     JOIN Role ON User.RoleID = Role.RoleID";
+                     JOIN Role ON User.role_id = Role.role_id";
 
         $resultUsers = $conn->query($sqlUsers);
 
@@ -354,9 +354,9 @@ function    handle_admin_dashboard() {
         }
 
         // Fetch course management data
-        $sqlCourses = "SELECT Course.CourseID, Course.CourseName, Course.UserID, User.FullName
+        $sqlCourses = "SELECT Course.course_id, Course.course_name, Course.user_id, User.fullname
                        FROM Course
-                       JOIN User ON Course.UserID = User.UserID";
+                       JOIN User ON Course.user_id = User.user_id";
 
         $resultCourses = $conn->query($sqlCourses);
 
@@ -397,11 +397,11 @@ function handle_update_user($userId) {
 
     // Update the user information in the database
     $sql = "UPDATE User
-            SET FullName = '$updatedFullName',
-                Birthdate = '$updatedBirthdate',
-                Address = '$updatedAddress',
-                Sex = '$updatedSex'
-            WHERE UserID = $userId";
+            SET fullname = '$updatedFullName',
+                birthdate = '$updatedBirthdate',
+                address = '$updatedAddress',
+                sex = '$updatedSex'
+            WHERE user_id = $userId";
 
     if ($conn->query($sql)) {
         http_response_code(200); // OK
@@ -426,7 +426,7 @@ function handle_update_user($userId) {
         $grade = mysqli_real_escape_string($conn, $data['grade']);
 
         // Check if the enrollment exists
-        $checkEnrollmentSql = "SELECT * FROM Enrollment WHERE EnrollmentID = $enrollmentId";
+        $checkEnrollmentSql = "SELECT * FROM Enrollment WHERE enrollment_id = $enrollmentId";
         $checkEnrollmentResult = $conn->query($checkEnrollmentSql);
 
         if ($checkEnrollmentResult->num_rows !== 1) {
@@ -435,7 +435,7 @@ function handle_update_user($userId) {
             exit();
         }
 
-        $updateGradeSql = "UPDATE Performance SET Grade = $grade WHERE EnrollmentID = $enrollmentId";
+        $updateGradeSql = "UPDATE Performance SET Grade = $grade WHERE enrollment_id = $enrollmentId";
 
         if ($conn->query($updateGradeSql)) {
             http_response_code(200);
@@ -461,7 +461,7 @@ function handle_update_user($userId) {
 
         // Update the user's password in the database
         $hashedPassword = md5($newPassword); // You may want to use a stronger hashing algorithm
-        $updatePasswordSql = "UPDATE User SET Password = ? WHERE UserID = ?";
+        $updatePasswordSql = "UPDATE User SET Password = ? WHERE user_id = ?";
         $stmt = $conn->prepare($updatePasswordSql);
         $stmt->bind_param("si", $hashedPassword, $userId);
 
