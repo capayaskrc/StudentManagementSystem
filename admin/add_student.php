@@ -68,15 +68,13 @@ include '../layout/header_student.php';
             const formData = new FormData(userForm);
             const jsonData = {};
 
-            echo formData;
-
             // Convert FormData to JSON
             formData.forEach((value, key) => {
                 jsonData[key] = value;
             });
 
             // Send JSON data to the server
-            fetch('./auth/api.php?addUser', {
+            fetch('../auth/api.php?user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
