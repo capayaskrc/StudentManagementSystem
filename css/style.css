@@ -16,6 +16,7 @@ body {
     text-align: center;
 }
 
+
 h2 {
     color: #3498db;
     text-align: center;
@@ -48,8 +49,6 @@ button {
     text-align: center;
 }
 
-
-
 button:hover {
     background-color: #2980b9;
 }
@@ -58,3 +57,4 @@ button:hover {
     color: #e74c3c;
     margin-top: 10px;
 }
+    

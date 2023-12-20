@@ -1,7 +1,6 @@
 <?php
 include 'layout/header.php';
 ?>
-<link rel="stylesheet" type="text/css" href="css/stle.css">
 <div class="container">
     <div>
         <img src="images\pictaker (1).png" alt="logo" width="150px">
