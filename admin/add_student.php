@@ -1,37 +1,5 @@
 <?php
 include '../layout/header_student.php';
-// Include the database connection file
-include '../auth/db_connection.php';
-
-// Check if the form is submitted
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get form data
-    $fullname = $_POST['fullname'];
-    $birthdate = $_POST['birthdate'];
-    $address = $_POST['address'];
-    $sex = $_POST['sex'];
-    $username = $_POST['username'];
-    $password = md5($_POST['password']); // Using md5 for simplicity, consider using more secure methods
-
-    // Insert data into the user table
-    $insertUserQuery = "INSERT INTO `user` (`fullname`, `birthdate`, `address`, `sex`, `username`, `password`, `role_id`) 
-                        VALUES ('$fullname', '$birthdate', '$address', '$sex', '$username', '$password', 3)"; // Assuming role_id 3 is for students
-
-    if ($conn->query($insertUserQuery)) {
-        // Get the user_id of the newly inserted user
-        $newUserId = $conn->insert_id;
-
-        // Insert data into the student table
-        $insertStudentQuery = "INSERT INTO `student` (`user_id`) VALUES ($newUserId)";
-        if ($conn->query($insertStudentQuery)) {
-            echo "Student added successfully!";
-        } else {
-            echo "Error adding student: " . $conn->error;
-        }
-    } else {
-        echo "Error adding user: " . $conn->error;
-    }
-}
 ?>
 
 <body>
@@ -81,9 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label for="username">Username:</label>
             <input type="text" name="username" required>
-
-            <label for="password">Password:</label>
-            <input type="password" name="password" required>
          
             <button type="submit">Add Student</button>
         </form>
