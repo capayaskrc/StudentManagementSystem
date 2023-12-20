@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <header class="header">
 
-        <a class="title" href="">Dashboard</a>
+        <a class="title" href="admin_dashboard.php">Dashboard</a>
 
         <div class="logout">
 
@@ -89,6 +89,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </div>
 
-</body>
+<script>
+    const userForm = document.getElementById('userForm');
 
-</html>
+    userForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Get form data
+        const formData = new FormData(userForm);
+        const jsonData = {
+
+        };
+
+        // Convert FormData to JSON
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        // Send JSON data to the server
+        fetch('./auth/api.php?addUser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonData),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data); // Handle the response from the server
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+    });
+
+</script>
+
+
+<?php include '../layout/footer.php'; ?>

@@ -15,7 +15,7 @@ $request_method = $_SERVER['REQUEST_METHOD'];
             } elseif (isset($_GET['performance'])) {
                 handle_performance();
             } elseif (isset($_GET['user'])) {
-                handle_add_user();
+                handle_addUser();
             } else {
                 http_response_code(400);
                 echo json_encode(["error" => "Invalid request"]);
@@ -116,7 +116,7 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         }
     }
 
-    function handle_add_user() {
+    function handle_addUser() {
         global $conn;
 
         // Check if the user making the request is an admin or teacher

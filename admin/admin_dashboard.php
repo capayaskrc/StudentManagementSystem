@@ -24,12 +24,10 @@ $conn->close();
 
 <header class="header">
 
-    <a class="title" href="">Dashboard</a>
+    <a class="title" href="admin_dashboard.php">Dashboard</a>
 
     <div class="logout">
-
-        <a href="logout.php" class="btn btn-primary">Logout</a>
-
+        <a href="../logout.php" class="btn btn-primary">Logout</a>
     </div>
 
 </header>
@@ -66,7 +64,5 @@ $conn->close();
     </div>
 
 </div>
-
-</body>
 
 <?php include '../layout/footer.php'; ?>
