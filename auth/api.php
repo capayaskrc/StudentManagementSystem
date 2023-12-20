@@ -134,7 +134,7 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         $data = json_decode(file_get_contents("php://input"), true);
 
         // Extract user information
-        $fullName = mysqli_real_escape_string($conn, $data['full_name']);
+        $fullName = mysqli_real_escape_string($conn, $data['fullname']);
         $birthdate = mysqli_real_escape_string($conn, $data['birthdate']);
         $address = mysqli_real_escape_string($conn, $data['address']);
         $sex = mysqli_real_escape_string($conn, $data['sex']);

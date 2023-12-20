@@ -19,10 +19,9 @@ include '../layout/header_student.php';
 
     <aside>
         <ul>
-            <li><a href="add_student.php">Add Student</a></li>
+            <li><a href="admin_dashboard.php">Dashboard</a></li>
+            <li><a href="add_student.php">Add User</a></li>
             <li><a href="">View Student</a></li>
-            <li><a href="">Add Teacher</a> </li>
-            <li><a href="">View Teacher</a></li>
             <li><a href="">Add Courses</a></li>
             <li><a href="">View Courses</a></li>
         </ul>
@@ -30,70 +29,75 @@ include '../layout/header_student.php';
 
     <div class="addstud">
         <h1>Add Student</h1>
-        <form action="add_student.php" method="post">
-            <!-- Add your form fields here -->
-            <label for="fullname">Full Name:</label>
-            <input type="text" name="fullname" required>
+        <form id="userForm">
+        <label for="fullname">Full Name:</label>
+        <input type="text" id="fullname" name="fullname" required>
 
-            <label for="birthdate">Birthdate:</label>
-            <input type="date" name="birthdate" required>
+        <label for="birthdate">Birthdate:</label>
+        <input type="date" id="birthdate" name="birthdate" required>
 
-            <label for="address">Address:</label>
-            <input type="text" name="address" required>
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
 
-            <label for="sex">Sex:</label>
-            <select name="sex" required>
-                <option value="M">Male</option>
-                <option value="F">Female</option>
-            </select>
+        <label for="sex">Sex:</label>
+        <select id="sex" name="sex" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
 
-            <label for="username">Username:</label>
-            <input type="text" name="username" required>
-         
-            <button type="submit">Add Student</button>
-        </form>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+            <option value="teacher">Teacher</option>
+            <option value="student">Student</option>
+        </select>
+
+        <button type="submit">Add User</button>
+    </form>
     </div>
 
-<script>
-    const userForm = document.getElementById('userForm');
+    <script>
+        const userForm = document.getElementById('userForm');
 
-    userForm.addEventListener('submit', function (event) {
-        event.preventDefault();
+        userForm.addEventListener('submit', function (event) {
+            event.preventDefault();
 
-        // Get form data
-        const formData = new FormData(userForm);
-        const jsonData = {
+            // Get form data
+            const formData = new FormData(userForm);
+            const jsonData = {};
 
-        };
+            echo formData;
 
-        // Convert FormData to JSON
-        formData.forEach((value, key) => {
-            jsonData[key] = value;
+            // Convert FormData to JSON
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+
+            // Send JSON data to the server
+            fetch('./auth/api.php?addUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data); // Handle the response from the server
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
         });
 
-        // Send JSON data to the server
-        fetch('./auth/api.php?addUser', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(jsonData),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data); // Handle the response from the server
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-            });
-    });
-
-</script>
+    </script>
 
 
-<?php include '../layout/footer.php'; ?>
+    <?php include '../layout/footer.php'; ?>
