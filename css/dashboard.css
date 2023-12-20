@@ -6,12 +6,16 @@
 }
 
 .header {
-	background-color: skyblue;
-	font-family: Montserrat, sans-serif;
-	font-weight: 800;
-	line-height: 70px;
-	padding-left: 30px;
-	color: black;
+    background-color: skyblue;
+    font-family: Montserrat, sans-serif;
+    font-weight: 800;
+    line-height: 70px;
+    padding-left: 30px;
+    color: black;
+    position: fixed;
+    width: 100%;
+    top: 0; /* Ensures the header stays at the top */
+    z-index: 1000; /* Ensures the header is above other elements */
 }
 
 a,a:hover {
@@ -42,6 +46,13 @@ ul {
 	text-align: center;
 }
 
+aside {
+    width: 200px;
+    background-color: #eee;
+	top: 75.5px;
+    position: fixed;
+}
+
 ul li {
 	list-style: none;
 	padding-bottom: 30px;
@@ -58,7 +69,97 @@ ul li a:hover {
 	text-decoration: none;
 }
 
+.welcome {
+	margin-top: 50px;
+	position: relative;
+	left: 250px;
+    padding: 20px;
+	font-family: Montserrat, sans-serif;
+}
 .content {
-	margin-left: 20%;
-	margin-top: 5%;
+	margin-left: 250px;
+    padding: 20px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.statistics-box {
+	font-family: Montserrat, sans-serif;
+	font-weight: 500;
+	color: #eee;
+	flex: 1;
+    padding: 20px;
+    margin-bottom: 20px;
+	border-radius: 10px; /* Rounded corners for boxes */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.269);
+}
+
+.teachers-box {
+    background: linear-gradient(to bottom left, #FFD700, #FFA500);
+}
+
+.students-box {
+    background: linear-gradient(to bottom right, #4169E1, #6495ED);
+}
+
+.courses-box {
+    background: linear-gradient(to bottom right, #008000, #00FF00);
+}
+
+.total-numbers {
+	display: inline;
+	color: black;
+    font-size: 50px;
+	font-family: Montserrat, sans-serif;
+    font-weight: 900;
+    text-align: center;
+}
+
+.addstud {
+	margin-left: 250px;
+    padding: 20px;
+}
+
+form {
+	background-color: #c1d6d8;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+	display: inline-block;
+	padding: 2px;
+	margin-bottom: 10px;
+}
+
+input,
+select {
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 2px solid #050130;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.btn {
+	margin-top: 5px;
+	padding: 0 50px 0 50px;
+	font-family: Montserrat, sans-serif;
+	font: inherit;
+}
+
+button {
+	justify-content: right;
+	background-color: #3498db;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: #2980b9;
 }

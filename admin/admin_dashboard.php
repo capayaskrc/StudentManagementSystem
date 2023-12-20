@@ -1,5 +1,25 @@
 <?php
 include '../layout/header_student.php';
+
+include '../auth/db_connection.php';
+
+// Total Students Query
+$result_students = $conn->query("SELECT COUNT(*) AS total_students FROM student");
+$row_students = $result_students->fetch_assoc();
+$total_students = $row_students['total_students'];
+
+// Total Teachers Query
+$result_teachers = $conn->query("SELECT COUNT(*) AS total_teachers FROM user WHERE role_id = 2");
+$row_teachers = $result_teachers->fetch_assoc();
+$total_teachers = $row_teachers['total_teachers'];
+
+// Total Courses Query
+$result_courses = $conn->query("SELECT COUNT(*) AS total_courses FROM course");
+$row_courses = $result_courses->fetch_assoc();
+$total_courses = $row_courses['total_courses'];
+
+// Close connection
+$conn->close();
 ?>
 
 <header class="header">
@@ -17,7 +37,7 @@ include '../layout/header_student.php';
 
 <aside>
     <ul>
-        <li><a href="">Add Student</a></li>
+        <li><a href="add_student.php">Add Student</a></li>
         <li><a href="">View Student</a></li>
         <li><a href="">Add Teacher</a> </li>
         <li><a href="">View Teacher</a></li>
@@ -26,10 +46,25 @@ include '../layout/header_student.php';
     </ul>
 </aside>
 
-
+<div class="welcome">
+    <h1>Welcome Admin!</h1>
+</div>
 <div class="content">
-    <h1>Hello World</h1>
-    <p>In this example, we have added an accordion and a dropdown menu inside the side navigation.</p>
+    <div class="statistics-box teachers-box">
+        <h2>Teachers:</h2>
+        <p class="total-numbers"><?php echo $total_teachers; ?></p>
+    </div>
+
+    <div class="statistics-box students-box">
+        <h2>Students:</h2>
+        <p class="total-numbers"><?php echo $total_students; ?></p>
+    </div>
+
+    <div class="statistics-box courses-box">
+        <h2>Courses:</h2>
+        <p class="total-numbers"><?php echo $total_courses; ?></p>
+    </div>
+
 </div>
 
 </body>
