@@ -216,7 +216,7 @@ $request_method = $_SERVER['REQUEST_METHOD'];
     // Close the role and check user statements
     $stmtRole->close();
     $stmtCheckUser->close();
-}
+    }
 
     function handle_enrollment() {
         global $conn;
@@ -603,27 +603,27 @@ function handle_update_user($userId) {
     }
     
     function handle_assign_instructor($courseID, $instructorID) {
-        global $conn;
-    
-        // Check if the user making the request is authorized (e.g., admin)
-        // Add your authorization logic here
-    
-        // Assign the instructor to the course
-        $sqlAssignInstructor = "UPDATE course SET instructor_id = ? WHERE course_id = ?";
-        $stmtAssignInstructor = $conn->prepare($sqlAssignInstructor);
-        $stmtAssignInstructor->bind_param("ii", $instructorID, $courseID);
-    
-        if ($stmtAssignInstructor->execute()) {
-            http_response_code(200); // OK
-            echo json_encode(["message" => "Instructor assigned to the course successfully"]);
-        } else {
-            http_response_code(500); // Internal Server Error
-            echo json_encode(["error" => "Error assigning instructor to the course"]);
-        }
-    
-        // Close the statement
-        $stmtAssignInstructor->close();
+    global $conn;
+
+    // Check if the user making the request is authorized (e.g., admin)
+    // Add your authorization logic here
+
+    // Assign the instructor to the course
+    $sqlAssignInstructor = "UPDATE course SET instructor_id = ? WHERE course_id = ?";
+    $stmtAssignInstructor = $conn->prepare($sqlAssignInstructor);
+    $stmtAssignInstructor->bind_param("ii", $instructorID, $courseID);
+
+    if ($stmtAssignInstructor->execute()) {
+        http_response_code(200); // OK
+        echo json_encode(["message" => "Instructor assigned to the course successfully"]);
+    } else {
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Error assigning instructor to the course"]);
     }
-    
+
+    // Close the statement
+    $stmtAssignInstructor->close();
+}
+
 
 ?>

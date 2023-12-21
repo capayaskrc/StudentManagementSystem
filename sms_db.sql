@@ -75,7 +75,7 @@ CREATE TABLE `role` (
 
 INSERT INTO `role` (`role_id`, `role_name`) VALUES
 (1, 'admin'),
-(2, 'teacher'),
+(2, 'instructor'),
 (3, 'student');
 
 -- --------------------------------------------------------

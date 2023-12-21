@@ -36,7 +36,7 @@ $conn->close();
 <aside>
     <ul>
         <li><a href="add_user.php">Add User</a></li>
-        <li><a href="">View Student</a></li>
+        <li><a href="view_student.php">View Student</a></li>
         <li><a href="add_course.php">Add Courses</a></li>
         <li><a href="">View Courses</a></li>
     </ul>
@@ -47,7 +47,7 @@ $conn->close();
 </div>
 <div class="content">
     <div class="statistics-box teachers-box">
-        <h2>Teachers:</h2>
+        <h2>Instructors:</h2>
         <p class="total-numbers"><?php echo $total_teachers; ?></p>
     </div>
 

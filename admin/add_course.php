@@ -10,7 +10,7 @@ include '../layout/header_user.php';
 
         <div class="logout">
 
-            <a href="logout.php" class="btn btn-primary">Logout</a>
+            <a href="../logout.php" class="btn btn-primary">Logout</a>
 
         </div>
 
@@ -21,7 +21,7 @@ include '../layout/header_user.php';
         <ul>
             <li><a href="admin_dashboard.php">Dashboard</a></li>
             <li><a href="add_user.php">Add User</a></li>
-            <li><a href="">View Student</a></li>
+            <li><a href="view_student.php">View Student</a></li>
             <li><a href="add_course.php">Add Courses</a></li>
             <li><a href="">View Courses</a></li>
         </ul>
