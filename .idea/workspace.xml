@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="edcc68ef-3103-4765-b355-a2542323782e" name="Changes" comment="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="faff048a-1cd1-47bc-afb9-58dfdc4364d2" />
+        <option name="url" value="https://github.com/capayaskrc/StudentManagementSystem.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "contexts": [
+    {
+      "name": "docker-desktop"
+    }
+  ],
+  "isMigrated": true
+}]]></component>
+  <component name="KubernetesSettings">
+    <option name="contextName" value="docker-desktop" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="C:\xampp\php\php.exe" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2ZkB5jED87AKxMJxX4L2H6cR0at" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/xampp/htdocs/StudentManagementSystem",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.Issue.Navigation",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="edcc68ef-3103-4765-b355-a2542323782e" name="Changes" comment="" />
+      <created>1702956016018</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1702956016018</updated>
+      <workItem from="1702956017117" duration="15513000" />
+      <workItem from="1703077522226" duration="6530000" />
+      <workItem from="1703164203723" duration="1235000" />
+      <workItem from="1703165669867" duration="232000" />
+      <workItem from="1703165910780" duration="2241000" />
+    </task>
+    <task id="LOCAL-00001" summary="working login page will direct to dashboard">
+      <option name="closed" value="true" />
+      <created>1702956840279</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1702956840279</updated>
+    </task>
+    <task id="LOCAL-00002" summary="added student dashboard, admin_dashboard, teacher_dashboard and fix the bug error404 when login.php">
+      <option name="closed" value="true" />
+      <created>1702957538962</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1702957538962</updated>
+    </task>
+    <task id="LOCAL-00003" summary="updated the code on index.php for flexible code. added footer and header.">
+      <option name="closed" value="true" />
+      <created>1702959778115</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1702959778115</updated>
+    </task>
+    <task id="LOCAL-00004" summary="added working addUser and fix the error on api and login which is change the route">
+      <option name="closed" value="true" />
+      <created>1702965065688</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1702965065688</updated>
+    </task>
+    <task id="LOCAL-00005" summary="added update password for default users">
+      <option name="closed" value="true" />
+      <created>1702968953672</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1702968953672</updated>
+    </task>
+    <task id="LOCAL-00006" summary="updated api.php">
+      <option name="closed" value="true" />
+      <created>1702976162464</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1702976162465</updated>
+    </task>
+    <task id="LOCAL-00007" summary="added session expire and session timeout, added the js for addUser, and change minor missing include in every php files">
+      <option name="closed" value="true" />
+      <created>1703079902556</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1703079902556</updated>
+    </task>
+    <task id="LOCAL-00008" summary="change the fetch url">
+      <option name="closed" value="true" />
+      <created>1703084005793</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1703084005793</updated>
+    </task>
+    <task id="LOCAL-00009" summary="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course">
+      <option name="closed" value="true" />
+      <created>1703167529108</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1703167529108</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="working login page will direct to dashboard" />
+    <MESSAGE value="added student dashboard, admin_dashboard, teacher_dashboard and fix the bug error404 when login.php" />
+    <MESSAGE value="updated the code on index.php for flexible code. added footer and header." />
+    <MESSAGE value="added working addUser and fix the error on api and login which is change the route" />
+    <MESSAGE value="added update password for default users" />
+    <MESSAGE value="updated api.php" />
+    <MESSAGE value="added session expire and session timeout, added the js for addUser, and change minor missing include in every php files" />
+    <MESSAGE value="change the fetch url" />
+    <MESSAGE value="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course" />
+    <option name="LAST_COMMIT_MESSAGE" value="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course" />
+  </component>
+</project>
