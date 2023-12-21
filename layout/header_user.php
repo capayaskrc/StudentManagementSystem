@@ -29,3 +29,7 @@ if (!isset($_SESSION['user_id'])) {
     <title>SMS</title>
 </head>
 <body>
+<?php
+include '../layout/header.php';
+include '../layout/navbar.php';
+?>
