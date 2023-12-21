@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="edcc68ef-3103-4765-b355-a2542323782e" name="Changes" comment="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course" />
+    <list default="true" id="edcc68ef-3103-4765-b355-a2542323782e" name="Changes" comment="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/add_course.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/add_course.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/add_user.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/add_user.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/admin_dashboard.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/admin_dashboard.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/layout/navbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/layout/navbar.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,10 +34,10 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -40,14 +46,14 @@
       </UrlAndAccount>
     </option>
   </component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "contexts": [
+  <component name="KubernetesApiProvider">{
+  &quot;contexts&quot;: [
     {
-      "name": "docker-desktop"
+      &quot;name&quot;: &quot;docker-desktop&quot;
     }
   ],
-  "isMigrated": true
-}]]></component>
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="KubernetesSettings">
     <option name="contextName" value="docker-desktop" />
   </component>
@@ -69,6 +75,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
     "last_opened_file_path": "C:/xampp/htdocs/StudentManagementSystem",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -92,6 +99,7 @@
       <workItem from="1703164203723" duration="1235000" />
       <workItem from="1703165669867" duration="232000" />
       <workItem from="1703165910780" duration="2241000" />
+      <workItem from="1703168389125" duration="326000" />
     </task>
     <task id="LOCAL-00001" summary="working login page will direct to dashboard">
       <option name="closed" value="true" />
@@ -165,7 +173,31 @@
       <option name="project" value="LOCAL" />
       <updated>1703167529108</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course">
+      <option name="closed" value="true" />
+      <created>1703168428520</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1703168428520</updated>
+    </task>
+    <task id="LOCAL-00011" summary="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course">
+      <option name="closed" value="true" />
+      <created>1703168487869</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1703168487869</updated>
+    </task>
+    <task id="LOCAL-00012" summary="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course">
+      <option name="closed" value="true" />
+      <created>1703168540143</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1703168540143</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

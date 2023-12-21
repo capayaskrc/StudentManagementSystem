@@ -24,10 +24,6 @@ $conn->close();
 ?>
 
 
-
-
-
-
 <div class="welcome">
     <h1>Welcome Admin!</h1>
 </div>

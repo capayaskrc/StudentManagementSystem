@@ -3,30 +3,6 @@ include '../layout/header_user.php';
 ?>
 
 <body>
-
-    <header class="header">
-
-        <a class="title" href="admin_dashboard.php">Dashboard</a>
-
-        <div class="logout">
-
-            <a href="logout.php" class="btn btn-primary">Logout</a>
-
-        </div>
-
-    </header>
-
-
-    <aside>
-        <ul>
-            <li><a href="admin_dashboard.php">Dashboard</a></li>
-            <li><a href="add_user.php">Add User</a></li>
-            <li><a href="">View Student</a></li>
-            <li><a href="add_course.php">Add Courses</a></li>
-            <li><a href="">View Courses</a></li>
-        </ul>
-    </aside>
-
     <div class="addcourse">
         <h1>Add Course</h1>
         <form id="courseForm">
