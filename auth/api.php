@@ -148,60 +148,75 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         $data = json_decode(file_get_contents("php://input"), true);
 
         // Extract user information
-        $fullName = mysqli_real_escape_string($conn, $data['fullname']);
-        $birthdate = mysqli_real_escape_string($conn, $data['birthdate']);
-        $address = mysqli_real_escape_string($conn, $data['address']);
-        $sex = mysqli_real_escape_string($conn, $data['sex']);
-        $username = mysqli_real_escape_string($conn, $data['username']);
-        $roleName = mysqli_real_escape_string($conn, $data['role']);
+    $fullName = mysqli_real_escape_string($conn, $data['fullname']);
+    $birthdate = mysqli_real_escape_string($conn, $data['birthdate']);
+    $address = mysqli_real_escape_string($conn, $data['address']);
+    $sex = mysqli_real_escape_string($conn, $data['sex']);
+    $username = mysqli_real_escape_string($conn, $data['username']);
+    $roleName = mysqli_real_escape_string($conn, $data['role']);
+    $yearLevel = isset($data['yearLevel']) ? mysqli_real_escape_string($conn, $data['yearLevel']) : null;
 
-        // Check if the user with the same name and birthdate already exists
-        $sqlCheckUser = "SELECT user_id FROM user WHERE fullname = ? AND birthdate = ?";
-        $stmtCheckUser = $conn->prepare($sqlCheckUser);
-        $stmtCheckUser->bind_param("ss", $fullName, $birthdate);
-        $stmtCheckUser->execute();
-        $resultCheckUser = $stmtCheckUser->get_result();
+    // Check if the user with the same name and birthdate already exists
+    $sqlCheckUser = "SELECT user_id FROM user WHERE fullname = ? AND birthdate = ?";
+    $stmtCheckUser = $conn->prepare($sqlCheckUser);
+    $stmtCheckUser->bind_param("ss", $fullName, $birthdate);
+    $stmtCheckUser->execute();
+    $resultCheckUser = $stmtCheckUser->get_result();
 
-        if ($resultCheckUser && $resultCheckUser->num_rows > 0) {
-            // User with the same name and birthdate already exists
-            http_response_code(400); // Bad Request
-            echo json_encode(["error" => "User with the same name already exists"]);
-            exit();
-        }
-
-        // Fetch the corresponding RoleID from the "role" table
-        $sqlRole = "SELECT role_id FROM role WHERE role_name = ?";
-        $stmtRole = $conn->prepare($sqlRole);
-        $stmtRole->bind_param("s", $roleName);
-        $stmtRole->execute();
-        $resultRole = $stmtRole->get_result();
-
-        if ($resultRole && $resultRole->num_rows == 1) {
-            // Role found, get the RoleID
-            $rowRole = $resultRole->fetch_assoc();
-            $roleId = $rowRole['role_id'];
-
-            // Insert the user into the "user" table
-            $sqlInsertUser = "INSERT INTO user (fullname, birthdate, address, sex, username, password, role_id)
-                              VALUES ('$fullName', '$birthdate', '$address', '$sex', '$username', MD5('default123'), $roleId)";
-
-            if ($conn->query($sqlInsertUser)) {
-                http_response_code(201); // Created
-                echo json_encode(["message" => "User added successfully"]);
-            } else {
-                http_response_code(500); // Internal Server Error
-                echo json_encode(["error" => "Error adding user to the database"]);
-            }
-        } else {
-            // Role not found
-            http_response_code(400); // Bad Request
-            echo json_encode(["error" => "Invalid role"]);
-        }
-
-        // Close the role and check user statements
-        $stmtRole->close();
-        $stmtCheckUser->close();
+    if ($resultCheckUser && $resultCheckUser->num_rows > 0) {
+        // User with the same name and birthdate already exists
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "User with the same name already exists"]);
+        exit();
     }
+
+    // Fetch the corresponding RoleID from the "role" table
+    $sqlRole = "SELECT role_id FROM role WHERE role_name = ?";
+    $stmtRole = $conn->prepare($sqlRole);
+    $stmtRole->bind_param("s", $roleName);
+    $stmtRole->execute();
+    $resultRole = $stmtRole->get_result();
+
+    if ($resultRole && $resultRole->num_rows == 1) {
+        // Role found, get the RoleID
+        $rowRole = $resultRole->fetch_assoc();
+        $roleId = $rowRole['role_id'];
+
+        // Insert the user into the "user" table
+        $sqlInsertUser = "INSERT INTO user (fullname, birthdate, address, sex, username, password, role_id)
+                          VALUES ('$fullName', '$birthdate', '$address', '$sex', '$username', MD5('default123'), $roleId)";
+
+        if ($conn->query($sqlInsertUser)) {
+            $lastUserId = $conn->insert_id;  // Get the last inserted user_id
+
+            // Check if the role is 'student' and insert into the 'student' table
+            if ($roleName === 'student') {
+                $sqlInsertStudent = "INSERT INTO student (user_id, year_lvl)
+                                     VALUES ($lastUserId, '$yearLevel')";
+
+                if (!$conn->query($sqlInsertStudent)) {
+                    http_response_code(500); // Internal Server Error
+                    echo json_encode(["error" => "Error adding student to the database"]);
+                    exit();
+                }
+            }
+
+            http_response_code(201); // Created
+            echo json_encode(["message" => "User added successfully"]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Error adding user to the database"]);
+        }
+    } else {
+        // Role not found
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "Invalid role"]);
+    }
+
+    // Close the role and check user statements
+    $stmtRole->close();
+    $stmtCheckUser->close();
+}
 
     function handle_enrollment() {
         global $conn;

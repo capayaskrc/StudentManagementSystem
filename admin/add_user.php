@@ -58,10 +58,10 @@ include '../layout/header_user.php';
             <div id="yearLevelContainer" style="display: none;">
                 <label for="yearLevel">Year Level:</label>
                 <select id="yearLevel" name="yearLevel">
-                    <option value="Freshman">Freshman</option>
-                    <option value="Sophomore">Sophomore</option>
-                    <option value="Junior">Junior</option>
-                    <option value="Senior">Senior</option>
+                    <option value="1">Freshman</option>
+                    <option value="2">Sophomore</option>
+                    <option value="3">Junior</option>
+                    <option value="4">Senior</option>
                 </select>
             </div>
 
@@ -111,6 +111,8 @@ include '../layout/header_user.php';
                 })
                 .then(data => {
                     console.log(data); // Handle the response from the server
+                    // Display a success message
+                    alert(data.message);
 
                     // Reset the form to clear input fields
                     userForm.reset();
