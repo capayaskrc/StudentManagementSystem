@@ -22,7 +22,7 @@ include '../layout/header_user.php';
             <li><a href="admin_dashboard.php">Dashboard</a></li>
             <li><a href="add_user.php">Add User</a></li>
             <li><a href="">View Student</a></li>
-            <li><a href="">Add Courses</a></li>
+            <li><a href="add_course.php">Add Courses</a></li>
             <li><a href="">View Courses</a></li>
         </ul>
     </aside>
@@ -54,12 +54,34 @@ include '../layout/header_user.php';
                 <option value="student">Student</option>
             </select>
 
+            <!-- Year Level Dropdown -->
+            <div id="yearLevelContainer" style="display: none;">
+                <label for="yearLevel">Year Level:</label>
+                <select id="yearLevel" name="yearLevel">
+                    <option value="Freshman">Freshman</option>
+                    <option value="Sophomore">Sophomore</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Senior">Senior</option>
+                </select>
+            </div>
+
             <button type="submit">Add User</button>
         </form>
     </div>
 
     <script>
         const userForm = document.getElementById('userForm');
+        const roleDropdown = document.getElementById('role');
+        const yearLevelContainer = document.getElementById('yearLevelContainer');
+
+        // Show/hide Year Level dropdown based on selected role
+        roleDropdown.addEventListener('change', function () {
+            if (roleDropdown.value === 'student') {
+                yearLevelContainer.style.display = 'block';
+            } else {
+                yearLevelContainer.style.display = 'none';
+            }
+        });
 
         userForm.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -88,23 +110,15 @@ include '../layout/header_user.php';
                     return response.json();
                 })
                 .then(data => {
-                    // Check if the response contains a 'message' property
-                    if (data && data.message) {
-                        // Display a success message
-                        alert(data.message);
+                    console.log(data); // Handle the response from the server
 
-                        // Reset the form to clear input fields
-                        userForm.reset();
-                    } else {
-                        // Handle other responses or errors
-                        console.log(data);
-                    }
+                    // Reset the form to clear input fields
+                    userForm.reset();
                 })
                 .catch(error => {
                     console.error('Fetch error:', error);
                 });
         });
-
     </script>
 
 
