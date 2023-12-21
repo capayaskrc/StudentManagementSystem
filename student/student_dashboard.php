@@ -1,5 +1,5 @@
 <?php
-include '../layout/header_student.php';
+include '../layout/header_user.php';
 ?>
 
 <header class="header">

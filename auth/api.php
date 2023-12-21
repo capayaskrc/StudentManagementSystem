@@ -14,6 +14,8 @@ $request_method = $_SERVER['REQUEST_METHOD'];
                 handle_enrollment();
             } elseif (isset($_GET['performance'])) {
                 handle_performance();
+            } elseif (isset($_GET['course'])) {
+                handle_addCourse();
             } elseif (isset($_GET['user'])) {
                 handle_addUser();
             } else {
@@ -48,6 +50,18 @@ $request_method = $_SERVER['REQUEST_METHOD'];
                 handle_update_user($_GET['userId']);
             } elseif (isset($_GET['password'])) {
                 handle_update_password();
+            } elseif (isset($_GET['course']) && isset($_GET['courseID']) && isset($_GET['instructorID'])) {
+                handle_assign_instructor($_GET['courseID'], $_GET['instructorID']);
+            } elseif (isset($_GET['course']) && isset($_GET['courseID'])) {
+                handle_update_course($_GET['courseID']);
+            } else {
+                http_response_code(400);
+                echo json_encode(["error" => "Invalid request"]);
+            }
+            break;
+        case 'DELETE':
+            if (isset($_GET['course']) && isset($_GET['courseID'])) {
+                handle_delete_course($_GET['courseID']);
             } else {
                 http_response_code(400);
                 echo json_encode(["error" => "Invalid request"]);
@@ -475,5 +489,126 @@ function handle_update_user($userId) {
 
         $stmt->close();
     }
+
+    function handle_addCourse() {
+        global $conn;
+    
+        // Check if the user making the request is authorized (e.g., admin)
+        // Add your authorization logic here
+    
+        // Get the data from the request body
+        $data = json_decode(file_get_contents("php://input"), true);
+    
+        // Extract course information
+        $courseName = mysqli_real_escape_string($conn, $data['courseName']);
+        // Add more fields as needed for your course details
+    
+        // Check if the course with the same name already exists
+        $sqlCheckCourse = "SELECT course_id FROM course WHERE course_name = ?";
+        $stmtCheckCourse = $conn->prepare($sqlCheckCourse);
+        $stmtCheckCourse->bind_param("s", $courseName);
+        $stmtCheckCourse->execute();
+        $resultCheckCourse = $stmtCheckCourse->get_result();
+    
+        if ($resultCheckCourse && $resultCheckCourse->num_rows > 0) {
+            // Course with the same name already exists
+            http_response_code(400); // Bad Request
+            echo json_encode(["error" => "Course with the same name already exists"]);
+            exit();
+        }
+    
+        // Insert the course into the "course" table
+        $sqlInsertCourse = "INSERT INTO course (course_name) VALUES (?)";
+        $stmtInsertCourse = $conn->prepare($sqlInsertCourse);
+        $stmtInsertCourse->bind_param("s", $courseName);
+    
+        if ($stmtInsertCourse->execute()) {
+            http_response_code(201); // Created
+            echo json_encode(["message" => "Course added successfully"]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Error adding course to the database"]);
+        }
+    
+        // Close the statement
+        $stmtInsertCourse->close();
+    }
+
+    function handle_delete_course($courseID) {
+        global $conn;
+    
+        // Check if the user making the request is authorized (e.g., admin)
+        // Add your authorization logic here
+    
+        // Delete the course from the "course" table
+        $sqlDeleteCourse = "DELETE FROM course WHERE course_id = ?";
+        $stmtDeleteCourse = $conn->prepare($sqlDeleteCourse);
+        $stmtDeleteCourse->bind_param("i", $courseID);
+    
+        if ($stmtDeleteCourse->execute()) {
+            http_response_code(200); // OK
+            echo json_encode(["message" => "Course deleted successfully"]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Error deleting course"]);
+        }
+    
+        // Close the statement
+        $stmtDeleteCourse->close();
+    }
+    
+    function handle_update_course($courseID) {
+        global $conn;
+    
+        // Check if the user making the request is authorized (e.g., admin)
+        // Add your authorization logic here
+    
+        // Get the updated course data from the request body
+        $data = json_decode(file_get_contents("php://input"), true);
+    
+        // Validate and sanitize the input data (customize based on your requirements)
+        $updatedCourseName = mysqli_real_escape_string($conn, $data['courseName']);
+        // Add more fields as needed for your course details
+    
+        // Update the course information in the database
+        $sqlUpdateCourse = "UPDATE course SET course_name = ? WHERE course_id = ?";
+        $stmtUpdateCourse = $conn->prepare($sqlUpdateCourse);
+        $stmtUpdateCourse->bind_param("si", $updatedCourseName, $courseID);
+    
+        if ($stmtUpdateCourse->execute()) {
+            http_response_code(200); // OK
+            echo json_encode(["message" => "Course information updated successfully"]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Error updating course information"]);
+        }
+    
+        // Close the statement
+        $stmtUpdateCourse->close();
+    }
+    
+    function handle_assign_instructor($courseID, $instructorID) {
+        global $conn;
+    
+        // Check if the user making the request is authorized (e.g., admin)
+        // Add your authorization logic here
+    
+        // Assign the instructor to the course
+        $sqlAssignInstructor = "UPDATE course SET instructor_id = ? WHERE course_id = ?";
+        $stmtAssignInstructor = $conn->prepare($sqlAssignInstructor);
+        $stmtAssignInstructor->bind_param("ii", $instructorID, $courseID);
+    
+        if ($stmtAssignInstructor->execute()) {
+            http_response_code(200); // OK
+            echo json_encode(["message" => "Instructor assigned to the course successfully"]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Error assigning instructor to the course"]);
+        }
+    
+        // Close the statement
+        $stmtAssignInstructor->close();
+    }
+    
 
 ?>

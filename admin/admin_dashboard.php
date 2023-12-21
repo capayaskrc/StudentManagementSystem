@@ -1,10 +1,10 @@
 <?php
-include '../layout/header_student.php';
+include '../layout/header_user.php';
 
 include '../auth/db_connection.php';
 
 // Total Students Query
-$result_students = $conn->query("SELECT COUNT(*) AS total_students FROM student");
+$result_students = $conn->query("SELECT COUNT(*) AS total_students FROM user WHERE role_id = 3");
 $row_students = $result_students->fetch_assoc();
 $total_students = $row_students['total_students'];
 
@@ -35,7 +35,7 @@ $conn->close();
 
 <aside>
     <ul>
-        <li><a href="add_student.php">Add User</a></li>
+        <li><a href="add_user.php">Add User</a></li>
         <li><a href="">View Student</a></li>
         <li><a href="">Add Courses</a></li>
         <li><a href="">View Courses</a></li>

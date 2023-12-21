@@ -1,5 +1,5 @@
 <?php
-include '../layout/header_student.php';
+include '../layout/header_user.php';
 ?>
 
 <body>
@@ -20,7 +20,7 @@ include '../layout/header_student.php';
     <aside>
         <ul>
             <li><a href="admin_dashboard.php">Dashboard</a></li>
-            <li><a href="add_student.php">Add User</a></li>
+            <li><a href="add_user.php">Add User</a></li>
             <li><a href="">View Student</a></li>
             <li><a href="">Add Courses</a></li>
             <li><a href="">View Courses</a></li>
@@ -30,32 +30,32 @@ include '../layout/header_student.php';
     <div class="addstud">
         <h1>Add Student</h1>
         <form id="userForm">
-        <label for="fullname">Full Name:</label>
-        <input type="text" id="fullname" name="fullname" required>
+            <label for="fullname">Full Name:</label>
+            <input type="text" id="fullname" name="fullname" required>
 
-        <label for="birthdate">Birthdate:</label>
-        <input type="date" id="birthdate" name="birthdate" required>
+            <label for="birthdate">Birthdate:</label>
+            <input type="date" id="birthdate" name="birthdate" required>
 
-        <label for="address">Address:</label>
-        <input type="text" id="address" name="address" required>
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
 
-        <label for="sex">Sex:</label>
-        <select id="sex" name="sex" required>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-        </select>
+            <label for="sex">Sex:</label>
+            <select id="sex" name="sex" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
 
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
 
-        <label for="role">Role:</label>
-        <select id="role" name="role" required>
-            <option value="teacher">Teacher</option>
-            <option value="student">Student</option>
-        </select>
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+            </select>
 
-        <button type="submit">Add User</button>
-    </form>
+            <button type="submit">Add User</button>
+        </form>
     </div>
 
     <script>
@@ -88,7 +88,17 @@ include '../layout/header_student.php';
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data); // Handle the response from the server
+                    // Check if the response contains a 'message' property
+                    if (data && data.message) {
+                        // Display a success message
+                        alert(data.message);
+
+                        // Reset the form to clear input fields
+                        userForm.reset();
+                    } else {
+                        // Handle other responses or errors
+                        console.log(data);
+                    }
                 })
                 .catch(error => {
                     console.error('Fetch error:', error);
