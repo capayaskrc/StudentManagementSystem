@@ -2,7 +2,9 @@
 
 <section id="users">
     <h2>Users</h2>
-    <button onclick="addUser()">Add User</button>
+    <div class="add-user">
+            <a href="add_user.php" class="btn btn-primary">ADD USER</a>
+        </div>
     <table id="userTable">
         <thead>
             <tr>
@@ -71,5 +73,4 @@ async function fetchUserData() {
 fetchUserData();
 </script>
 
-</body>
-</html>
+<?php include '../layout/footer.php'; ?>

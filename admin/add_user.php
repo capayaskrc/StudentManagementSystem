@@ -87,9 +87,12 @@ include '../layout/header_user.php';
                 })
                 .then(data => {
                     console.log(data); // Handle the response from the server
-
+                    
                     // Reset the form to clear input fields
                     userForm.reset();
+
+                    // Redirect to users.php after successful form submission
+                    window.location.href = 'users.php';
                 })
                 .catch(error => {
                     console.error('Fetch error:', error);
