@@ -69,6 +69,8 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         case 'DELETE':
             if (isset($_GET['course']) && isset($_GET['courseID'])) {
                 handle_delete_course($_GET['courseID']);
+            } elseif (isset($_GET['user']) && isset($_GET['userID'])) {
+                handle_delete_user($_GET['userID']);
             } else {
                 http_response_code(400);
                 echo json_encode(["error" => "Invalid request"]);
@@ -422,6 +424,28 @@ function handle_view_user_all() {
 }
 
 
+function handle_delete_user($userId) {
+    global $conn;
+
+    // Check if the user making the request is authorized (e.g., admin)
+    // Add your authorization logic here
+
+    // Delete the user from the "user" table
+    $sqlDeleteUser = "DELETE FROM user WHERE user_id = ?";
+    $stmtDeleteUser = $conn->prepare($sqlDeleteUser);
+    $stmtDeleteUser->bind_param("i", $userId);
+
+    if ($stmtDeleteUser->execute()) {
+        http_response_code(200); // OK
+        echo json_encode(["message" => "User deleted successfully"]);
+    } else {
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Error deleting user"]);
+    }
+
+    // Close the statement
+    $stmtDeleteUser->close();
+}
 
 
 
@@ -448,7 +472,7 @@ function handle_update_user($userId) {
     $sql = "UPDATE User
             SET fullname = '$updatedFullName',
                 birthdate = '$updatedBirthdate',
-                address = '$updatedAddress',
+                address = '$updatedAddress',  
                 sex = '$updatedSex'
             WHERE user_id = $userId";
 
