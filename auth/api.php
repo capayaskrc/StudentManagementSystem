@@ -41,6 +41,13 @@ $request_method = $_SERVER['REQUEST_METHOD'];
                         http_response_code(403);
                         echo json_encode(["error" => "Invalid user role"]);
                 }
+            }elseif (isset($_GET['user']) && isset($_GET['userID'])) {
+                handle_view_user($_GET['userID']);
+            } elseif (isset($_GET['user'])) {
+                handle_view_user_all();
+            } else {
+                http_response_code(400);
+                echo json_encode(["error" => "Invalid request"]);
             }
             break;
         case 'PUT':
@@ -60,13 +67,15 @@ $request_method = $_SERVER['REQUEST_METHOD'];
             }
             break;
         case 'DELETE':
-            if (isset($_GET['course']) && isset($_GET['courseID'])) {
-                handle_delete_course($_GET['courseID']);
-            } else {
-                http_response_code(400);
-                echo json_encode(["error" => "Invalid request"]);
-            }
-            break;
+                if (isset($_GET['user']) && isset($_GET['userID'])) {
+                    handle_delete_user($_GET['userID']);
+                } elseif (isset($_GET['course']) && isset($_GET['courseID'])) {
+                    handle_delete_course($_GET['courseID']);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(["error" => "Invalid request"]);
+                }
+                break;
         default:
             http_response_code(405);
             echo json_encode(["error" => "Invalid request method"]);
@@ -201,6 +210,29 @@ $request_method = $_SERVER['REQUEST_METHOD'];
         // Close the role and check user statements
         $stmtRole->close();
         $stmtCheckUser->close();
+    }
+
+    function handle_delete_user($userId) {
+        global $conn;
+    
+        // Check if the user making the request is authorized (e.g., admin)
+        // Add your authorization logic here
+    
+        // Delete the user from the "user" table
+        $sqlDeleteUser = "DELETE FROM user WHERE user_id = ?";
+        $stmtDeleteUser = $conn->prepare($sqlDeleteUser);
+        $stmtDeleteUser->bind_param("i", $userId);
+    
+        if ($stmtDeleteUser->execute()) {
+            http_response_code(200); // OK
+            echo json_encode(["message" => "User deleted successfully"]);
+        } else {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "Error deleting user"]);
+        }
+    
+        // Close the statement
+        $stmtDeleteUser->close();
     }
 
     function handle_enrollment() {
@@ -388,6 +420,34 @@ function    handle_admin_dashboard() {
         echo json_encode(["error" => "Admin not found"]);
     }
 }
+
+function handle_view_user_all() {
+    global $conn;
+
+    // Check if the user making the request is authorized (e.g., admin)
+    // Add your authorization logic here
+
+    // Fetch all users with their role names
+    $sql = "SELECT User.user_id, User.fullname, User.birthdate, User.address, User.sex, User.username, Role.role_name
+            FROM user
+            LEFT JOIN Role ON User.role_id = Role.role_id";  // Use LEFT JOIN to include users without a role
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        echo json_encode($users);
+    } else {
+        http_response_code(404); // Not Found
+        echo json_encode(["error" => "No users found"]);
+    }
+}
+
+
+
 
 
 function handle_update_user($userId) {
