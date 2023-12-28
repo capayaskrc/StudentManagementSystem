@@ -4,7 +4,7 @@ include '../layout/header_user.php';
 
 <body>
     <div class="addstud">
-        <h1>Add Student</h1>
+        <h1>Add User</h1>
         <form id="userForm">
             <label for="fullname">Full Name:</label>
             <input type="text" id="fullname" name="fullname" required>

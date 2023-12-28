@@ -46,7 +46,7 @@ h1 {
 nav {
     background-color: #0174BE;
     padding: 0.5em;
-    text-align: center; /* Center-align the text */
+    text-align: center;
 }
 
 ul {
@@ -56,16 +56,16 @@ ul {
 }
 
 li {
-    display: inline-block; /* Display items horizontally */
+    display: inline-block;
     font-size: larger;
     font-weight: 800;
-    margin: 0 10px; /* Add equal padding on both sides */
+    margin: 0 10px;
     padding:0 300px;
 }
 
 li:hover {
     border-radius: 50px;
-    background-color: #FFC436; /* Change the background color on hover */
+    background-color: #FFC436;
 }
 
 a {
@@ -127,6 +127,7 @@ th {
 
 button {
     padding: 5px 10px;
+    border-radius: 15px;
     background-color: #4CAF50;
     color: #fff;
     border: none;
@@ -137,3 +138,77 @@ button:hover {
     background-color: #45a049;
 }
 
+#opts {
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+}
+
+#searchInput {
+    margin-right: 10px;
+    border-radius: 20px;
+    border: 3px solid #0174BE;
+    height: 30px;
+    width: 250px;
+}
+
+#noResultsMessage {
+    display: none;
+    text-align: center;
+    color: red;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+/* Additional styles for add_user.php */
+
+.addstud {
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    width: 600px;
+    margin-top: 20px;
+    margin-left: 440px;
+    align-content: center;
+}
+
+.addstud h1 {
+    text-align: center;
+    color: #333;
+}
+
+.addstud label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.addstud input,
+.addstud select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.addstud button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.addstud button:hover {
+    background-color: #45a049;
+}
