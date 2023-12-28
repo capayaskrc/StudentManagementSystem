@@ -23,26 +23,27 @@ $total_courses = $row_courses['total_courses'];
 $conn->close();
 ?>
 
+<main>
+        <section id="welcome">
+            <h2>Welcome Admin</h2>
+        </section>
 
-<div class="welcome">
-    <h1>Welcome Admin!</h1>
-</div>
-<div class="content">
-    <div class="statistics-box teachers-box">
-        <h2>Teachers:</h2>
-        <p class="total-numbers"><?php echo $total_teachers; ?></p>
-    </div>
+        <section id="status">
+            <div class="status-item">
+                <h3>Students</h3>
+                <p id="student-count"><?php echo $total_students; ?></p>
+            </div>
 
-    <div class="statistics-box students-box">
-        <h2>Students:</h2>
-        <p class="total-numbers"><?php echo $total_students; ?></p>
-    </div>
+            <div class="status-item">
+                <h3>Teachers</h3>
+                <p id="teacher-count"><?php echo $total_teachers; ?></p>
+            </div>
 
-    <div class="statistics-box courses-box">
-        <h2>Courses:</h2>
-        <p class="total-numbers"><?php echo $total_courses; ?></p>
-    </div>
-
-</div>
+            <div class="status-item">
+                <h3>Courses</h3>
+                <p id="course-count"><?php echo $total_courses; ?></p>
+            </div>
+        </section>
+    </main>
 
 <?php include '../layout/footer.php'; ?>
