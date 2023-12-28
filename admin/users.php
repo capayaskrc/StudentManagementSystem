@@ -103,7 +103,7 @@
 
     // Fetch user data from your API and populate the table
     // Example using fetch API:
-    fetch('api_url_for_getting_users')
+    fetch('../auth/api.php?user')
         .then(response => response.json())
         .then(data => {
             const userTable = document.getElementById('userTable');
