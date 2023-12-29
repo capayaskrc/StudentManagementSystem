@@ -16,7 +16,7 @@
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search by ID, Name, or Username">
             <button onclick="searchUsers()">Search</button>
-            <button onclick="clearSearch()">Clear Search</button>
+            <button onclick="clearSearch()">Clear Search & Filters</button>
         </div>
     </div>
 
@@ -93,13 +93,20 @@
             row.insertCell(5).textContent = user.username;
             row.insertCell(6).textContent = user.role_name;
 
+            const updateButton = document.createElement('button');
+            updateButton.textContent = 'Update';
+            updateButton.onclick = function () {
+                updateUser(user);
+            };
+
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.onclick = function () {
                 deleteUser(user.user_id);
             };
 
-            row.insertCell(7).appendChild(deleteButton);
+            row.insertCell(7).appendChild(updateButton);
+            row.insertCell(8).appendChild(deleteButton);
         });
     }
 
@@ -135,30 +142,55 @@
 
     let currentSortType = 'all'; // Default to showing all users
 
-function sortUsers() {
-    const sortType = document.getElementById('sortType').value;
-    currentSortType = sortType;
+    function sortUsers() {
+        const sortType = document.getElementById('sortType').value;
+        currentSortType = sortType;
 
-    if (sortType === 'all') {
-        // Show all users
-        populateUserTable(allUsers);
-    } else {
-        // Filter users based on the selected role
-        const sortedUsers = allUsers.filter(user => user.role_name.toLowerCase() === sortType.toLowerCase());
-        populateUserTable(sortedUsers);
+        if (sortType === 'all') {
+            // Show all users
+            populateUserTable(allUsers);
+        } else {
+            // Filter users based on the selected role
+            const sortedUsers = allUsers.filter(user => user.role_name.toLowerCase() === sortType.toLowerCase());
+            populateUserTable(sortedUsers);
+        }
+
+        // Clear the search input
+        document.getElementById('searchInput').value = '';
+
+        // Hide the "No results" message
+        document.getElementById('noResultsMessage').style.display = 'none';
     }
 
-    // Clear the search input
-    document.getElementById('searchInput').value = '';
+    // Add this event listener to trigger the sorting when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        sortUsers();
+    });
 
-    // Hide the "No results" message
-    document.getElementById('noResultsMessage').style.display = 'none';
-}
+    async function updateUser(userId, updatedUserData) {
+        try {
+            const response = await fetch(`../auth/api.php?user&userID=${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedUserData),
+            });
 
-// Add this event listener to trigger the sorting when the page loads
-document.addEventListener('DOMContentLoaded', function () {
-    sortUsers();
-});
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log(data); // You can handle the response data as needed
+
+            return data;
+        } catch (error) {
+            console.error('Error updating user:', error.message);
+            throw error;
+        }
+    }
+
 </script>
 
 <?php include '../layout/footer.php'; ?>
