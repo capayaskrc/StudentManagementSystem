@@ -5,6 +5,14 @@
         <div class="add-user">
             <a href="add_user.php" class="btn btn-primary">ADD USER</a>
         </div>
+        <div class="sort-container">
+            <label for="sortType">Sort by:</label>
+            <select id="sortType" onchange="sortUsers()">
+                <option value="all">All Users</option>
+                <option value="student">Students</option>
+                <option value="teacher">Teachers</option>
+            </select>
+        </div>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search by ID, Name, or Username">
             <button onclick="searchUsers()">Search</button>
@@ -121,11 +129,36 @@
         // Repopulate the table with all users
         populateUserTable(allUsers);
 
-         // Hide the "No results" message
-         document.getElementById('noResultsMessage').style.display = 'none';
+        // Hide the "No results" message
+        document.getElementById('noResultsMessage').style.display = 'none';
     }
 
+    let currentSortType = 'all'; // Default to showing all users
 
+function sortUsers() {
+    const sortType = document.getElementById('sortType').value;
+    currentSortType = sortType;
+
+    if (sortType === 'all') {
+        // Show all users
+        populateUserTable(allUsers);
+    } else {
+        // Filter users based on the selected role
+        const sortedUsers = allUsers.filter(user => user.role_name.toLowerCase() === sortType.toLowerCase());
+        populateUserTable(sortedUsers);
+    }
+
+    // Clear the search input
+    document.getElementById('searchInput').value = '';
+
+    // Hide the "No results" message
+    document.getElementById('noResultsMessage').style.display = 'none';
+}
+
+// Add this event listener to trigger the sorting when the page loads
+document.addEventListener('DOMContentLoaded', function () {
+    sortUsers();
+});
 </script>
 
 <?php include '../layout/footer.php'; ?>
