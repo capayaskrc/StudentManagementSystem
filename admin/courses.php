@@ -8,8 +8,6 @@
 
     <!-- Buttons for adding and deleting courses -->
     <button onclick="openAddCourseModal()">Add Course</button>
-    <button onclick="deleteSelectedCourses()">Delete Selected Courses</button>
-
     <!-- Add Course Modal -->
     <div id="addCourseModal" style="display: none;">
         <!-- Add your form fields for adding a course -->
@@ -33,33 +31,33 @@
 
 </section>
 <script>
+
+    // TODO: add search bar to find the courses
+    //       make the add courses will be in different frame so that it will be modal truelly.
     document.addEventListener("DOMContentLoaded", function () {
         fetchAllCourses();
     });
-    // Function to fetch and display courses from the API
-function displayCourses() {
 
-}
 
-// Function to open the "Add Course" modal
-function openAddCourseModal() {
-    document.getElementById('addCourseModal').style.display = 'block';
-}
+    // Function to open the "Add Course" modal
+    function openAddCourseModal() {
+        document.getElementById('addCourseModal').style.display = 'block';
+    }
 
-// Function to close the "Add Course" modal
-function closeAddCourseModal() {
-    document.getElementById('addCourseModal').style.display = 'none';
-}
+    // Function to close the "Add Course" modal
+    function closeAddCourseModal() {
+        document.getElementById('addCourseModal').style.display = 'none';
+    }
 
     function addCourses() {
         // Get the course name from the input field
-        var courseName = document.getElementById("courseName").value;
+        const courseName = document.getElementById("courseName").value;
         if (courseName.trim() === "") {
             alert("Please enter a course name");
             return;
         }
 
-        var courseData = {
+        const courseData = {
             courseName: courseName,
         };
 
