@@ -24,7 +24,7 @@ switch ($request_method) {
         }
         break;
     case 'GET':
-        authenticate_user();
+//        authenticate_user();
 
         if (isset($_GET['dashboard'])) {
             switch ($_SESSION['role']) {
@@ -45,7 +45,9 @@ switch ($request_method) {
             handle_view_user($_GET['userID']);
         } elseif (isset($_GET['user'])) {
             handle_view_user_all();
-        } else {
+        } elseif (isset($_GET['courses'])) {
+            handle_getAllCourses();
+        }else {
             http_response_code(400);
             echo json_encode(["error" => "Invalid request"]);
         }
@@ -558,22 +560,33 @@ function handle_update_password()
 
     $stmt->close();
 }
+    function handle_getAllCourses() {
+    global $conn;
 
+    $sql = "SELECT course_id, course_name FROM course";
+    $result = $conn->query($sql);
+
+    $courses = array();
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $courses[] = $row;
+            }
+            echo json_encode($courses);
+        } else {
+            http_response_code(404); // Not Found
+            echo json_encode(["error" => "No users found"]);
+        }
+
+        return $courses;
+    }
 function handle_addCourse()
 {
     global $conn;
 
-    // Check if the user making the request is authorized (e.g., admin)
-    // Add your authorization logic here
-
-    // Get the data from the request body
     $data = json_decode(file_get_contents("php://input"), true);
 
-    // Extract course information
     $courseName = mysqli_real_escape_string($conn, $data['courseName']);
-    // Add more fields as needed for your course details
 
-    // Check if the course with the same name already exists
     $sqlCheckCourse = "SELECT course_id FROM course WHERE course_name = ?";
     $stmtCheckCourse = $conn->prepare($sqlCheckCourse);
     $stmtCheckCourse->bind_param("s", $courseName);
@@ -603,6 +616,7 @@ function handle_addCourse()
     // Close the statement
     $stmtInsertCourse->close();
 }
+
 
 function handle_delete_course($courseID)
 {
