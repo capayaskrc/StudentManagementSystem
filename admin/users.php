@@ -4,7 +4,7 @@
         <div id="opts" class="mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="add-user">
-                    <a href="add_user.php" class="btn btn-primary">ADD USER</a>
+                    <a href="add_user.php" class="btn btn-primary mr-2">ADD USER</a>
                 </div>
                 <div class="sort-container">
                     <label for="sortType">Sort by:</label>
@@ -14,18 +14,25 @@
                         <option value="teacher">Teachers</option>
                     </select>
                 </div>
-                <div class="search-container">
-                    <div class="input-group">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Search by ID, Name, or Username">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="searchUsers()">Search</button>
-                            <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">Clear Search & Filters</button>
-                        </div>
+<!--                <div class="search-container w-100 justify-content-end">-->
+<!--                    <div class="input-group">-->
+<!--                        <input type="text" id="searchInput" class="form-control" placeholder="Search by ID, Name, or Username">-->
+<!--                        <div class="input-group-append">-->
+<!--                            <button class="btn btn-outline-secondary" type="button" onclick="searchUsers()">Search</button>-->
+<!--                            <button class="btn btn-outline-secondary mr-1" type="button" onclick="clearSearch()">Clear</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="input-group">
+                    <input type="text" id="searchInputs" class="form-control" placeholder="Search by ID, Name, or Username" aria-label="Search by ID, Name, or Username" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" onclick="searchUsers()">Search</button>
+                        <button class="btn btn-outline-secondary mr-1" type="button" onclick="clearSearch()">Clear</button>
                     </div>
                 </div>
             </div>
         </div>
-
+        <div class="table-responsive">
         <div class="table-responsive">
             <table id="userTable" class="table">
                 <thead>
@@ -99,10 +106,10 @@
             row.insertCell(4).textContent = user.sex;
             row.insertCell(5).textContent = user.birthdate;
             row.insertCell(6).textContent = user.address;
-
+            row.cells[0].classList.add('text-center', 'align-middle');
             // Add Bootstrap classes to center text content
-            for (let i = 0; i <= 6; i++) {
-                row.cells[i].classList.add('text-center', 'align-middle');
+            for (let i = 1; i <= 6; i++) {
+                row.cells[i].classList.add('align-middle');
             }
 
             const updateButton = document.createElement('button');
@@ -132,8 +139,8 @@
     }
 
     function searchUsers() {
-        const searchInput = document.getElementById('searchInput');
-        const searchTerm = searchInput.value.toLowerCase();
+        const searchInputs = document.getElementById('searchInputs');
+        const searchTerm = searchInputs.value.toLowerCase();
 
         // Filter users based on the search term
         const filteredUsers = allUsers.filter(user =>
@@ -152,7 +159,7 @@
 
     function clearSearch() {
         // Clear the search input
-        document.getElementById('searchInput').value = '';
+        document.getElementById('searchInputs').value = '';
 
         // Repopulate the table with all users
         populateUserTable(allUsers);
@@ -177,7 +184,7 @@
         }
 
         // Clear the search input
-        document.getElementById('searchInput').value = '';
+        document.getElementById('searchInputs').value = '';
 
         // Hide the "No results" message
         document.getElementById('noResultsMessage').style.display = 'none';
