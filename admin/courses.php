@@ -33,11 +33,11 @@
         <!-- Bootstrap Table -->
         <div class="table-responsive">
             <table class="table table-bordered" id="courseTable">
-                <thead>
-                <tr>
-                    <th>Course ID</th>
-                    <th>Course Name</th>
-                    <th>Action</th>
+                <thead >
+                <tr >
+                    <th class="text-center align-middle" style="width: 10%">Course ID</th>
+                    <th class="text-center align-middle" style="width: 80%">Course Name</th>
+                    <th class="text-center align-middle" style="width: 10%">Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -131,6 +131,9 @@
                 const row = tbody.insertRow();
                 row.insertCell(0).textContent = course.course_id;
                 row.insertCell(1).textContent = course.course_name;
+                row.cells[0].classList.add('text-center', 'align-middle');
+                row.cells[1].classList.add('align-middle');
+
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Delete';
                 deleteButton.className = 'btn btn-danger btn-sm';
@@ -138,6 +141,7 @@
                     deleteCourse(course.course_id);
                 };
                 const cell = row.insertCell(2);
+                row.cells[2].classList.add('text-center', 'align-middle');
                 cell.appendChild(deleteButton);
             });
         }

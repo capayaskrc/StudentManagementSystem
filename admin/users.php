@@ -1,47 +1,54 @@
 <?php include '../layout/header_user.php'; ?>
 
-<section id="users">
-    <div id="opts">
-        <div class="add-user">
-            <a href="add_user.php" class="btn btn-primary">ADD USER</a>
+    <section id="users">
+        <div id="opts" class="mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="add-user">
+                    <a href="add_user.php" class="btn btn-primary">ADD USER</a>
+                </div>
+                <div class="sort-container">
+                    <label for="sortType">Sort by:</label>
+                    <select id="sortType" class="form-control" onchange="sortUsers()">
+                        <option value="all">All Users</option>
+                        <option value="student">Students</option>
+                        <option value="teacher">Teachers</option>
+                    </select>
+                </div>
+                <div class="search-container">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by ID, Name, or Username">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" onclick="searchUsers()">Search</button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">Clear Search & Filters</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="sort-container">
-            <label for="sortType">Sort by:</label>
-            <select id="sortType" onchange="sortUsers()">
-                <option value="all">All Users</option>
-                <option value="student">Students</option>
-                <option value="teacher">Teachers</option>
-            </select>
+
+        <div class="table-responsive">
+            <table id="userTable" class="table">
+                <thead>
+                <tr>
+                    <th style="width: 3%;" class="text-center align-middle">ID</th>
+                    <th style="width: 15%;" class="text-center align-middle">Username</th>
+                    <th style="width: auto;" class="text-center align-middle">Role</th>
+                    <th style="width: 15%;" class="text-center align-middle">Full Name</th>
+                    <th style="width: 5%;" class="text-center align-middle">Sex</th>
+                    <th style="width: 10%;" class="text-center align-middle">Birthdate</th>
+                    <th style="width: auto;" class="text-center align-middle">Address</th>
+
+                    <th style="width: 12%;" colspan="2" class="text-center align-middle">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- User data will be inserted here dynamically -->
+                </tbody>
+            </table>
         </div>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search by ID, Name, or Username">
-            <button onclick="searchUsers()">Search</button>
-            <button onclick="clearSearch()">Clear Search & Filters</button>
-        </div>
-    </div>
+        <p id="noResultsMessage" class="mt-3 text-center">No users found.</p>
 
-    <table id="userTable">
-        <thead>
-            <tr>
-                <th>User ID</th>
-                <th>Full Name</th>
-                <th>Birthdate</th>
-                <th>Address</th>
-                <th>Sex</th>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- User data will be inserted here dynamically -->
-        </tbody>
-    </table>
-
-    <p id="noResultsMessage">No users found.</p>
-</section>
-
-<script>
+        <script>
     let allUsers = []; // Store all users to avoid fetching data multiple times
 
     // Fetch all users initially
@@ -86,27 +93,41 @@
         users.forEach(user => {
             const row = tbody.insertRow();
             row.insertCell(0).textContent = user.user_id;
-            row.insertCell(1).textContent = user.fullname;
-            row.insertCell(2).textContent = user.birthdate;
-            row.insertCell(3).textContent = user.address;
+            row.insertCell(1).textContent = user.username;
+            row.insertCell(2).textContent = user.role_name;
+            row.insertCell(3).textContent = user.fullname;
             row.insertCell(4).textContent = user.sex;
-            row.insertCell(5).textContent = user.username;
-            row.insertCell(6).textContent = user.role_name;
+            row.insertCell(5).textContent = user.birthdate;
+            row.insertCell(6).textContent = user.address;
+
+            // Add Bootstrap classes to center text content
+            for (let i = 0; i <= 6; i++) {
+                row.cells[i].classList.add('text-center', 'align-middle');
+            }
 
             const updateButton = document.createElement('button');
-            updateButton.textContent = 'Update';
+            updateButton.innerHTML = '<i class="fas fa-edit"></i>';
+            updateButton.className = 'btn btn-warning btn-sm'; // Small size
+            updateButton.style.marginRight = '10px';
+            updateButton.style.width = '40px'; // Set a specific width
+            updateButton.style.height = '40px'; // Set a specific height
             updateButton.onclick = function () {
                 updateUser(user);
             };
 
             const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
+            deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteButton.className = 'btn btn-danger btn-sm'; // Small size
+            deleteButton.style.width = '40px'; // Set a specific width
+            deleteButton.style.height = '40px'; // Set a specific height
             deleteButton.onclick = function () {
                 deleteUser(user.user_id);
             };
 
-            row.insertCell(7).appendChild(updateButton);
-            row.insertCell(8).appendChild(deleteButton);
+            const actionCell = row.insertCell(7);
+            actionCell.classList.add('text-center', 'align-middle'); // Center align and middle vertically
+            actionCell.appendChild(updateButton);
+            actionCell.appendChild(deleteButton);
         });
     }
 
