@@ -6,29 +6,35 @@
         <button class="btn btn-primary" data-toggle="modal" data-target="#addCourseModal" onclick="openAddCourseModal()">Add Course</button>
 
         <!-- Bootstrap Modal -->
-        <div class="modal fade" id="addCourseModal" tabindex="100" role="dialog" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addCourseModalLabel">Add Course</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="bg-danger" aria-label="Close" onclick="closeEditModal()" style="width: 30px; height: 30px; padding: 0; border-radius: 0;">
+                            <span aria-hidden="true" style="font-size: 20px;">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <!-- Add your form fields for adding a course -->
-                        <div class="form-group">
-                            <label for="courseName">Course Name</label>
-                            <input type="text" class="form-control" id="courseName" placeholder="Enter Course Name">
-                        </div>
+                        <form>
+                            <!-- Add a hidden input field for course ID -->
+                            <input type="hidden" id="courseId" name="courseId">
+
+                            <div class="form-group">
+                                <label for="courseName">Course Name</label>
+                                <input type="text" class="form-control" id="courseName" placeholder="Enter Course Name">
+                            </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" onclick="addCourse()">Add Course</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeAddCourseModal()">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeEditModal()">Close</button>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Bootstrap Table -->
         <div class="table-responsive">
@@ -53,13 +59,20 @@
         });
 
         // Function to open the "Add Course" modal
-        function openAddCourseModal() {
-            document.getElementById('addCourseModal').style.display = 'block';
+        function openAddCourseModal(course) {
+            // Populate the modal with the course data if needed
+            document.getElementById('courseId').value = course ? course.courseId : '';
+            document.getElementById('courseName').value = course ? course.courseName : '';
+
+            // Show the modal
+            $('#addCourseModal').modal('show');
         }
 
+
         // Function to close the "Add Course" modal
-        function closeAddCourseModal() {
-            document.getElementById('addCourseModal').style.display = 'none';
+        function closeEditModal() {
+            // Hide the modal
+            $('#addCourseModal').modal('hide');
             // Manually remove the modal backdrop
             document.body.classList.remove('modal-open');
             const modalBackdrops = document.getElementsByClassName('modal-backdrop');
@@ -92,7 +105,7 @@
                 })
                 .then(data => {
                     fetchAllCourses(); // Refresh the course list after adding a new course
-                    closeAddCourseModal();
+                    closeEditModal()
                 })
                 .catch(error => {
                     console.error('Error adding course:', error);
@@ -148,7 +161,7 @@
 
         function deleteCourse(courseId) {
             if (confirm("Are you sure you want to delete this course?")) {
-                fetch(`../auth/api.php?course=${courseId}`, {
+                fetch(`../auth/api.php?course&courseID=${courseId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
