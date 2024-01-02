@@ -1,12 +1,12 @@
 <?php include '../layout/header_user.php'; ?>
 
     <section id="courses" style="container-fluid justify-content-md-center col-md-8">
-        <h1>My Courses</h1>
+        <h1>Courses</h1>
         <!-- Bootstrap button for adding courses -->
         <button class="btn btn-primary" data-toggle="modal" data-target="#addCourseModal" onclick="openAddCourseModal()">Add Course</button>
 
         <!-- Bootstrap Modal -->
-        <div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addCourseModal" tabindex="100" role="dialog" aria-labelledby="addCourseModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">

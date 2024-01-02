@@ -41,9 +41,9 @@ switch ($request_method) {
                     http_response_code(403);
                     echo json_encode(["error" => "Invalid user role"]);
             }
-        } elseif (isset($_GET['user']) && isset($_GET['userID'])) {
+        } elseif (isset($_GET['getUser']) && isset($_GET['userID'])) {
             handle_view_user($_GET['userID']);
-        } elseif (isset($_GET['user'])) {
+        } elseif (isset($_GET['users'])) {
             handle_view_user_all();
         } elseif (isset($_GET['courses'])) {
             handle_getAllCourses();
@@ -245,10 +245,6 @@ function handle_update_user($userId)
 {
     global $conn;
 
-    // Check if the user making the request is authorized (e.g., admin)
-    // Add your authorization logic here
-
-    // Get the updated user data from the request body
     $data = json_decode(file_get_contents("php://input"), true);
 
     // Validate and sanitize the input data (customize based on your requirements)
@@ -256,25 +252,24 @@ function handle_update_user($userId)
     $updatedBirthdate = mysqli_real_escape_string($conn, $data['birthdate']);
     $updatedAddress = mysqli_real_escape_string($conn, $data['address']);
     $updatedSex = mysqli_real_escape_string($conn, $data['sex']);
-    $updatedRoleId = mysqli_real_escape_string($conn, $data['role_id']);
 
     // Update the user information in the database for the specific user ID
-    $sql = "UPDATE User
-                SET fullname = '$updatedFullName',
-                    birthdate = '$updatedBirthdate',
-                    address = '$updatedAddress',
-                    sex = '$updatedSex',
-                    role_id = $updatedRoleId
-                WHERE user_id = $userId";
+    $sql = "UPDATE user
+            SET fullname = '$updatedFullName',
+                birthdate = '$updatedBirthdate',
+                address = '$updatedAddress',
+                sex = '$updatedSex'
+            WHERE user_id = $userId";
 
     if ($conn->query($sql)) {
         http_response_code(200); // OK
         echo json_encode(["message" => "User information updated successfully"]);
     } else {
         http_response_code(500); // Internal Server Error
-        echo json_encode(["error" => "Error updating user information"]);
+        echo json_encode(["error" => "Error updating user information: " . $conn->error]);
     }
 }
+
 
 function handle_enrollment()
 {
@@ -465,7 +460,29 @@ function handle_admin_dashboard()
         echo json_encode(["error" => "Admin not found"]);
     }
 }
+function handle_view_user($userId)
+{
+    global $conn;
 
+    // Check if the user making the request is authorized (e.g., admin)
+    // Add your authorization logic here
+
+    // Fetch the user with the specified ID along with their role name
+    $sql = "SELECT User.user_id, User.fullname, User.birthdate, User.address, User.sex, User.username, Role.role_name
+            FROM user
+            LEFT JOIN Role ON User.role_id = Role.role_id
+            WHERE User.user_id = $userId";
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        echo json_encode($user);
+    } else {
+        http_response_code(404); // Not Found
+        echo json_encode(["error" => "User not found"]);
+    }
+}
 function handle_view_user_all()
 {
     global $conn;
