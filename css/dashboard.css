@@ -29,7 +29,8 @@ h1 {
 
 .btn {
     display: inline-block;
-    padding: 8px 12px;
+    margin-left: 5px;
+    padding: 6px 12px;
     background-color: #FFC436;
     border-radius: 10px;
     font-weight: 500;
@@ -145,17 +146,16 @@ button:hover {
     justify-content: space-between;
 }
 
+.add-user {
+    margin-right: 70px; /* Adjust the margin as needed */
+    width: 250px;
+}
+
 .sort-container {
     display: flex;
     align-items: center;
-}
-
-#noResultsMessage {
-    display: none;
-    text-align: center;
-    color: red;
-    font-weight: 500;
-    font-size: 1rem;
+    width: 400px;
+    margin-right: 100px;
 }
 
 /* Additional styles for add_user.php */
@@ -167,8 +167,8 @@ button:hover {
     border-radius: 8px;
     width: 600px;
     margin-top: 20px;
-    margin-left: 440px;
-    align-content: center;
+    margin-left: auto; /* Center the form horizontally */
+    margin-right: auto;
 }
 
 .addstud h1 {
