@@ -18,6 +18,8 @@ switch ($request_method) {
             handle_addCourse();
         } elseif (isset($_GET['user'])) {
             handle_addUser();
+        } elseif (isset($_GET['create_course'])) {
+            handle_create_course();
         } else {
             http_response_code(400);
             echo json_encode(["error" => "Invalid request"]);
@@ -411,6 +413,36 @@ function handle_teacher_dashboard()
     }
 }
 
+function handle_create_course()
+{
+    global $conn;
+
+    // Check if the user making the request is a teacher
+    if ($_SESSION['role'] !== 'teacher') {
+        http_response_code(403); // Forbidden
+        echo json_encode(["error" => "Unauthorized access"]);
+        exit();
+    }
+
+    // Get the data from the request body
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    // Extract course information
+    $courseName = mysqli_real_escape_string($conn, $data['course_name']);
+
+    // Insert the new course into the "Course" table
+    $sqlInsertCourse = "INSERT INTO Course (course_name, user_id) VALUES ('$courseName', {$_SESSION['user_id']})";
+
+    if ($conn->query($sqlInsertCourse)) {
+        http_response_code(201); // Created
+        echo json_encode(["message" => "Course created successfully"]);
+    } else {
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Error creating course"]);
+    }
+}
+
+
 
 function handle_admin_dashboard()
 {
@@ -508,6 +540,7 @@ function handle_view_user_all()
         echo json_encode(["error" => "No users found"]);
     }
 }
+
 
 
 
