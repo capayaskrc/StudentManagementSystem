@@ -26,7 +26,7 @@ switch ($request_method) {
         }
         break;
     case 'GET':
-//        authenticate_user();
+        // authenticate_user();
 
         if (isset($_GET['dashboard'])) {
             switch ($_SESSION['role']) {
@@ -49,7 +49,9 @@ switch ($request_method) {
             handle_view_user_all();
         } elseif (isset($_GET['courses'])) {
             handle_getAllCourses();
-        }else {
+        } elseif (isset($_GET['settings'])) {
+            handle_user_settings();
+        } else {
             http_response_code(400);
             echo json_encode(["error" => "Invalid request"]);
         }
@@ -84,6 +86,7 @@ switch ($request_method) {
         http_response_code(405);
         echo json_encode(["error" => "Invalid request method"]);
 }
+
 
 function handle_login()
 {
@@ -135,6 +138,8 @@ function handle_login()
     }
     $stmt->close();
 }
+
+
 
 function authenticate_user()
 {
@@ -609,6 +614,25 @@ function handle_update_password()
     }
 
     $stmt->close();
+}
+
+function handle_user_settings()
+{
+    global $conn;
+
+    $userId = $_SESSION['user_id'];
+
+    // Fetch user details
+    $sql = "SELECT * FROM users WHERE id = $userId";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows == 1) {
+        $userDetails = $result->fetch_assoc();
+        echo json_encode($userDetails);
+    } else {
+        http_response_code(404); // Not Found
+        echo json_encode(["error" => "User not found"]);
+    }
 }
     function handle_getAllCourses() {
     global $conn;
