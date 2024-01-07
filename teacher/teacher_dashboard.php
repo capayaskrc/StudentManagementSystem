@@ -38,7 +38,47 @@ print_r($_SESSION);
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                document.getElementById('student-info').innerHTML = `
+            <p style="color: black"><strong>Name:</strong> ${data.fullname}</p>
+            <p style="color: black"><strong>Birthdate:</strong> ${data.birthdate}</p>
+            <p style="color: black"><strong>Address:</strong> ${data.address}</p>
+            <p style="color: black"><strong>Sex:</strong> ${data.sex}</p>
+        `;
+
+                // Display enrolled courses
+                const coursesList = document.getElementById('courses-list');
+                if (data.courses && data.courses.length > 0) {
+                    data.courses.forEach(course => {
+                        const courseElement = document.createElement('div');
+                        courseElement.className = 'course';
+
+                        // Create elements for course details
+                        const courseNameElement = document.createElement('p');
+                        const dateEnrolledElement = document.createElement('p');
+                        const gradeElement = document.createElement('p');
+
+                        // Apply styles directly to the elements
+                        courseNameElement.innerHTML = `<strong>Course Name:</strong> ${course.course_name}`;
+                        dateEnrolledElement.innerHTML = `<strong>Date Enrolled:</strong> ${course.date_enrolled}`;
+                        gradeElement.innerHTML = `<strong>Grade:</strong> ${course.grade}`;
+
+                        // Set color property to black
+                        courseNameElement.style.color = 'black';
+                        dateEnrolledElement.style.color = 'black';
+                        gradeElement.style.color = 'black';
+
+                        // Append elements to courseElement
+                        courseElement.appendChild(courseNameElement);
+                        courseElement.appendChild(dateEnrolledElement);
+                        courseElement.appendChild(gradeElement);
+
+                        // Append courseElement to coursesList
+                        coursesList.appendChild(courseElement);
+                    });
+                } else {
+                    coursesList.innerHTML = '<p>No enrolled courses.</p>';
+                }
+
             })
             .catch(error => console.error('Error fetching data:', error));
 
