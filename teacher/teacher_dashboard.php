@@ -1,8 +1,5 @@
 <?php
 include '../layout/header_student.php';
-print_r($_SESSION);
-
-
 ?>
 
     <div class="container">
@@ -42,8 +39,7 @@ print_r($_SESSION);
             <p style="color: black"><strong>Name:</strong> ${data.fullname}</p>
             <p style="color: black"><strong>Birthdate:</strong> ${data.birthdate}</p>
             <p style="color: black"><strong>Address:</strong> ${data.address}</p>
-            <p style="color: black"><strong>Sex:</strong> ${data.sex}</p>
-        `;
+            <p style="color: black"><strong>Sex:</strong> ${data.sex}</p>`;
 
                 // Display enrolled courses
                 const coursesList = document.getElementById('courses-list');
@@ -76,7 +72,7 @@ print_r($_SESSION);
                         coursesList.appendChild(courseElement);
                     });
                 } else {
-                    coursesList.innerHTML = '<p>No enrolled courses.</p>';
+                    coursesList.innerHTML = '<p style="color: black">No enrolled courses.</p>';
                 }
 
             })
