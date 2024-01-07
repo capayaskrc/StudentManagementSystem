@@ -29,7 +29,8 @@ switch ($request_method) {
         // authenticate_user();
 
         if (isset($_GET['dashboard'])) {
-            switch ($_SESSION['role']) {
+            $userRole = isset($_GET['userRole']) ? $_GET['userRole'] : '';
+            switch ($userRole) {
                 case 'student':
                     handle_student_dashboard();
                     break;
@@ -86,58 +87,102 @@ switch ($request_method) {
         http_response_code(405);
         echo json_encode(["error" => "Invalid request method"]);
 }
+function generateAuthToken($userId, $username, $secretKey)
+{
+    // Generate a token based on user-specific data and a secret key
+    $tokenData = [
+        'user_id' => $userId,
+        'username' => $username,
+        'timestamp' => time(),
+    ];
+
+    // JSON encode the data
+    $jsonTokenData = json_encode($tokenData);
+
+    // Encode the JSON data using base64 and add a signature using the secret key
+    $token = base64_encode($jsonTokenData) . '.' . hash_hmac('sha256', $jsonTokenData, $secretKey);
+
+    return $token;
+}
 
 
 function handle_login()
 {
     global $conn;
+
+    // Read JSON input
     $data = json_decode(file_get_contents("php://input"), true);
 
-    $username = $data['username'];
-    $password = $data['password'];
+    $username = isset($data['username']) ? trim($data['username']) : '';
+    $password = isset($data['password']) ? $data['password'] : '';
 
-    // Fetch the user from the database based on the username
-    $sql = "SELECT User.user_id, User.role_id, User.password, Role.role_name FROM User 
-            JOIN Role ON User.role_id = Role.role_id 
-            WHERE User.username = ?";
-    $stmt = $conn->prepare($sql);
+    if (empty($username) || empty($password)) {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "Invalid input"]);
+        return;
+    }
+
+    // Fetch user details from the database
+    $stmt = $conn->prepare("SELECT user.user_id, user.role_id, user.password, role.role_name
+                        FROM user
+                        JOIN role ON user.role_id = role.role_id
+                        WHERE user.username = ?");
+
+    if (!$stmt) {
+        // Handle the SQL error
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Database error: " . $conn->error]);
+        return;
+    }
+
     $stmt->bind_param("s", $username);
     $stmt->execute();
+
+    if ($stmt->error) {
+        // Handle the SQL execution error
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Execution error: " . $stmt->error]);
+        return;
+    }
+
     $result = $stmt->get_result();
+    $stmt->close();
 
-    if ($result) {
-        if ($result->num_rows == 1) {
-            $row = $result->fetch_assoc();
+    if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
 
-            // Verify the password using MD5
-            if (md5($password) === $row['password']) {
-                // Password is correct
-                $_SESSION['user_id'] = $row['user_id'];
-                $_SESSION['role'] = $row['role_id'];
+        // Verify the password using MD5
+        if (md5($password) === $row['password']) {
+            // Password is correct
+            $_SESSION['user_id'] = $row['user_id'];
+            $_SESSION['role'] = $row['role_name'];
 
-                $token = session_id();
-                $response = [
-                    "token" => $token,
-                    "role" => $row['role_name'],
-                    "message" => "Login successful"
-                ];
-                echo json_encode($response);
-            } else {
-                // Password is incorrect
-                http_response_code(401); // Unauthorized
-                echo json_encode(["error" => "Invalid credentials"]);
-            }
+            // Generate and store the authentication token
+            $token = generateAuthToken($row['user_id'], $username, 'your_secret_key');
+            $_SESSION['auth_token'] = $token;
+
+            $response = [
+                "token" => $token,
+                "role" => $row['role_name'],
+                "message" => "Login successful"
+            ];
+            echo json_encode($response);
         } else {
-            // User not found
+            // Password is incorrect
             http_response_code(401); // Unauthorized
             echo json_encode(["error" => "Invalid credentials"]);
         }
     } else {
-        http_response_code(500); // Internal Server Error
-        echo json_encode(["error" => "Error querying the database"]);
+        // User not found
+        http_response_code(401); // Unauthorized
+        echo json_encode(["error" => "Invalid credentials"]);
     }
-    $stmt->close();
 }
+
+
+
+
+
 
 
 
@@ -367,11 +412,23 @@ function handle_teacher_dashboard()
     global $conn;
 
     // Fetch teacher details
-    $userId = $_SESSION['user_id'];
-    $sql = "SELECT * FROM users WHERE id = $userId";
-    $result = $conn->query($sql);
+    $userId = isset($_GET['user_id']) ? $_GET['user_id'] : '';
 
-    if ($result->num_rows == 1) {
+    if ($userId !== '') {
+        $sql = "SELECT * FROM user WHERE user_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $userId); // Assuming user_id is an integer
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+
+        if ($result === false) {
+            // Handle the SQL error
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "SQL error: " . $conn->error]);
+            return;
+        }
+
         $teacher = $result->fetch_assoc();
 
         // Fetch courses taught by the teacher
@@ -381,42 +438,45 @@ function handle_teacher_dashboard()
 
         $resultCourses = $conn->query($sqlCourses);
 
-        if ($resultCourses->num_rows > 0) {
-            $courses = [];
-            while ($row = $resultCourses->fetch_assoc()) {
-                $courses[] = $row;
-            }
-            $teacher['courses_taught'] = $courses;
-
-            // Fetch students enrolled in each course taught by the teacher
-            foreach ($courses as &$course) {
-                $courseId = $course['course_id'];
-                $sqlEnrollments = "SELECT User.fullname, Enrollment.date_enrolled
-                                   FROM Enrollment
-                                   JOIN User ON Enrollment.student_id = User.user_id
-                                   WHERE Enrollment.course_id = $courseId";
-
-                $resultEnrollments = $conn->query($sqlEnrollments);
-
-                if ($resultEnrollments->num_rows > 0) {
-                    $enrollments = [];
-                    while ($row = $resultEnrollments->fetch_assoc()) {
-                        $enrollments[] = $row;
-                    }
-                    $course['enrollments'] = $enrollments;
-                }
-            }
-
-            echo json_encode($teacher);
-        } else {
-            http_response_code(404); // Not Found
-            echo json_encode(["error" => "Teacher not assigned to any courses"]);
+        if ($resultCourses === false) {
+            // Handle the SQL error
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "SQL error: " . $conn->error]);
+            return;
         }
+
+        $courses = [];
+        while ($row = $resultCourses->fetch_assoc()) {
+            $courses[] = $row;
+        }
+        $teacher['courses_taught'] = $courses;
+
+        // Fetch students enrolled in each course taught by the teacher
+        foreach ($courses as &$course) {
+            $courseId = $course['course_id'];
+            $sqlEnrollments = "SELECT User.fullname, Enrollment.date_enrolled
+                               FROM Enrollment
+                               JOIN User ON Enrollment.student_id = User.user_id
+                               WHERE Enrollment.course_id = $courseId";
+
+            $resultEnrollments = $conn->query($sqlEnrollments);
+
+            if ($resultEnrollments->num_rows > 0) {
+                $enrollments = [];
+                while ($row = $resultEnrollments->fetch_assoc()) {
+                    $enrollments[] = $row;
+                }
+                $course['enrollments'] = $enrollments;
+            }
+        }
+
+        echo json_encode($teacher);
     } else {
-        http_response_code(404); // Not Found
-        echo json_encode(["error" => "Teacher not found"]);
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "Invalid user_id parameter"]);
     }
 }
+
 
 function handle_create_course()
 {

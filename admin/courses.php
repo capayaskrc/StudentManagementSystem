@@ -79,8 +79,8 @@
             <thead>
                 <tr>
                     <th class="text-center align-middle" style="width: 10%">Course ID</th>
-                    <th class="text-center align-middle" style="width: 80%">Course Name</th>
-                    <th class="text-center align-middle" style="width: 10%">Action</th>
+                    <th class="text-center align-middle" style="width: 60%">Course Name</th>
+                    <th class="text-center align-middle" style="width: 30%">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -192,6 +192,15 @@
                 openEnrollModal(course.course_id);
             };
 
+            // Add "Assign Teacher" button
+            const assignTeacherButton = document.createElement('button');
+            assignTeacherButton.textContent = 'Assign Teacher';
+            assignTeacherButton.className = 'btn btn-info btn-sm';
+            assignTeacherButton.onclick = function () {
+                // Call the function to handle teacher assignment here
+                assignTeacher(course.course_id);
+            };
+
             // Add "Delete" button
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
@@ -203,9 +212,11 @@
             const cell = row.insertCell(2);
             row.cells[2].classList.add('text-center', 'align-middle');
             cell.appendChild(enrollButton);
+            cell.appendChild(assignTeacherButton);
             cell.appendChild(deleteButton);
         });
     }
+
 
     function deleteCourse(courseId) {
         if (confirm("Are you sure you want to delete this course?")) {
