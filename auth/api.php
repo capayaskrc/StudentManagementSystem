@@ -815,7 +815,7 @@ function handle_assign_instructor($courseID, $instructorID)
     // Add your authorization logic here
 
     // Assign the instructor to the course
-    $sqlAssignInstructor = "UPDATE course SET instructor_id = ? WHERE course_id = ?";
+    $sqlAssignInstructor = "UPDATE course SET user_id = ? WHERE course_id = ?";
     $stmtAssignInstructor = $conn->prepare($sqlAssignInstructor);
     $stmtAssignInstructor->bind_param("ii", $instructorID, $courseID);
 
