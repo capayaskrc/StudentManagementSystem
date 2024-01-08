@@ -71,7 +71,37 @@
         </div>
     </div>
 
-
+    <!-- Bootstrap Modal for Assigning Instructor -->
+    <div class="modal fade" id="assignInstructorModal" tabindex="-1" role="dialog" aria-labelledby="assignInstructorModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignInstructorModalLabel">Assign Instructor</h5>
+                    <button type="button" class="bg-danger" aria-label="Close" onclick="closeAssignInstructorModal()"
+                        style="width: 30px; height: 30px; padding: 0; border-radius: 0;">
+                        <span aria-hidden="true" style="font-size: 20px;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add your form fields for enrolling a student -->
+                    <form>
+                        <input type="hidden" id="assignInstructorModalCourseId" name="courseId"> <!-- Add this line -->
+                        <div class="form-group">
+                            <label for="teacherId">Student ID</label>
+                            <input type="text" class="form-control" id="teacherId" placeholder="Enter Teacher ID">
+                        </div>
+                        <!-- You can add more fields for student information if needed -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="assignInstructor()">Assign</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        onclick="closeAssignInstructorModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap Table -->
     <div class="table-responsive">
@@ -198,7 +228,7 @@
             assignTeacherButton.className = 'btn btn-info btn-sm';
             assignTeacherButton.onclick = function () {
                 // Call the function to handle teacher assignment here
-                assignTeacher(course.course_id);
+                openAssignInstructorModal(course.course_id);
             };
 
             // Add "Delete" button
@@ -311,6 +341,74 @@
         }
     }
 
+    function assignInstructor() {
+        const courseId = document.getElementById("assignInstructorModalCourseId").value;
+        const teacherId = document.getElementById("teacherId").value;
+
+        // Validate Teacher ID (you can add more validation as needed)
+        if (teacherId.trim() === "") {
+            alert("Please enter a student ID");
+            return;
+        }
+
+        // Prepare enrollment data
+        const enrollmentData = {
+            teacher_id: teacherId,
+            course_id: courseId,
+        };
+
+        // Send enrollment request to the backend
+        fetch(`../auth/api.php?course&courseID=${courseId}&instructorID=${teacherId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(enrollmentData),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to enroll student');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle successful instructor assignment (you can show a success message or perform additional actions)
+            console.log('Enrollment successful:', data);
+
+            // Refresh the course list or perform any other necessary actions
+            fetchAllCourses();
+        })
+        .catch(error => {
+            console.error('Error enrolling student:', error);
+            // Handle error (you can show an error message to the user)
+        })
+        .finally(() => {
+            // Close the instructor assigning modal
+            closeAssignInstructorModal();
+        });
+    }
+
+
+    // Function to open the "Assign Instructor" modal
+    function openAssignInstructorModal(courseId) {
+        // Set the course ID in the modal (if needed)
+        document.getElementById('assignInstructorModalCourseId').value = courseId;
+
+        // Show the modal
+        $('#assignInstructorModal').modal('show');
+    }
+
+    // Function to close the "Assign Instructor" modal
+    function closeAssignInstructorModal() {
+        // Hide the modal
+        $('#assignInstructorModal').modal('hide');
+        // Manually remove the modal backdrop
+        document.body.classList.remove('modal-open');
+        const modalBackdrops = document.getElementsByClassName('modal-backdrop');
+        for (let backdrop of modalBackdrops) {
+            backdrop.parentNode.removeChild(backdrop);
+        }
+    }
 
 </script>
 <?php include '../layout/footer.php'; ?>
