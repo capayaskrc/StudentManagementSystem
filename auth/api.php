@@ -35,7 +35,7 @@ switch ($request_method) {
                     handle_student_dashboard();
                     break;
                 case 'teacher':
-                    handle_teacher_dashboard();
+                    handle_teacher_dashboard($_GET['user_id']);
                     break;
                 case 'admin':
                     handle_admin_dashboard();
