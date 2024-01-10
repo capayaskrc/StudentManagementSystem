@@ -35,7 +35,7 @@ switch ($request_method) {
                     handle_student_dashboard();
                     break;
                 case 'teacher':
-                    handle_teacher_dashboard($_GET['user_id']);
+                    handle_teacher_dashboard();
                     break;
                 case 'admin':
                     handle_admin_dashboard();
@@ -50,8 +50,8 @@ switch ($request_method) {
             handle_view_user_all();
         } elseif (isset($_GET['courses'])) {
             handle_getAllCourses();
-        } elseif (isset($_GET['settings'])) {
-            handle_user_settings();
+        }  elseif (isset($_GET['settings']) && isset($_GET['user_id'])) {
+            handle_user_settings($_GET['user_id']);
         } else {
             http_response_code(400);
             echo json_encode(["error" => "Invalid request"]);
@@ -179,13 +179,6 @@ function handle_login()
         echo json_encode(["error" => "Invalid credentials"]);
     }
 }
-
-
-
-
-
-
-
 
 function authenticate_user()
 {
@@ -681,20 +674,48 @@ function handle_user_settings()
 {
     global $conn;
 
-    $userId = $_SESSION['user_id'];
+    // Check if the user_id parameter is provided
+    if (!isset($_GET['user_id'])) {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "Missing user_id parameter"]);
+        return;
+    }
 
-    // Fetch user details
-    $sql = "SELECT * FROM users WHERE id = $userId";
-    $result = $conn->query($sql);
+    $userId = $_GET['user_id'];
+
+    // Fetch user details excluding the password field
+    $sql = "SELECT user_id, username, fullname, birthdate, sex, address, role_id FROM user WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $userId); // Assuming user_id is an integer
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result === false) {
+        // Handle the SQL error
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "SQL error: " . $stmt->error]);
+        return;
+    }
 
     if ($result->num_rows == 1) {
         $userDetails = $result->fetch_assoc();
+
+        // Additional logic (if needed) to fetch related data
+
         echo json_encode($userDetails);
     } else {
         http_response_code(404); // Not Found
         echo json_encode(["error" => "User not found"]);
     }
+
+    $stmt->close();
 }
+
+
+
+
+
+
     function handle_getAllCourses() {
     global $conn;
 

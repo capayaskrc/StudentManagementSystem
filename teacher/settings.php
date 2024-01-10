@@ -1,6 +1,4 @@
-<?php
-include '../layout/header_student.php';
-?>
+<?php include '../layout/header_student.php'; ?>
 
 <div class="container mt-5">
     <section>
@@ -13,25 +11,25 @@ include '../layout/header_student.php';
                         <h3 class="card-title">Personal Information</h3>
 
                         <form>
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" value="John Doe" readonly>
+                            <div class="mb-3">
+                                <label for="fullname" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="fullname" name="fullname" disabled>
                             </div>
-
-                            <div class="form-group">
-                                <label for="address">Address</label>
-                                <input type="text" class="form-control" id="address" value="123 Main St" readonly>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="birthdate" class="form-label">Birthdate</label>
+                                    <input type="text" class="form-control" id="birthdate" name="birthdate" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="sex" class="form-label">Sex</label>
+                                    <input type="text" class="form-control" id="sex" name="sex" disabled>
+                                </div>
                             </div>
-
-                            <div class="form-group">
-                                <label for="sex">Sex</label>
-                                <input type="text" class="form-control" id="sex" value="Male" readonly>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address" name="address" disabled>
                             </div>
-
-                            <div class="form-group">
-                                <label for="bday">Birthday</label>
-                                <input type="text" class="form-control" id="bday" value="1990-01-01" readonly>
-                            </div>
+                            <!-- Add other personal information fields as needed -->
                         </form>
                     </div>
                 </div>
@@ -43,21 +41,11 @@ include '../layout/header_student.php';
                         <h3 class="card-title">Account Information</h3>
 
                         <form>
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="username" value="<?php echo $_SESSION['username']; ?>" readonly>
-                                    <div class="input-group-append">
-                                        <button id="editUsernameBtn" class="btn btn-primary" type="button">Edit</button>
-                                    </div>
-                                </div>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" disabled>
                             </div>
-
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" placeholder="********" readonly>
-                                <a href="change_password.php" class="btn btn-link mt-2">Change Password</a>
-                            </div>
+                            <!-- Add other account information fields as needed -->
                         </form>
                     </div>
                 </div>
@@ -65,8 +53,42 @@ include '../layout/header_student.php';
         </div>
     </section>
 </div>
+
 <?php include '../layout/footer.php'; ?>
+
 <script>
+    const userId = '<?php echo $_SESSION['user_id']; ?>';
 
+    function handleUserSettings() {
+        console.log('Fetching user settings...');
 
+        fetch(`../auth/api.php?settings&user_id=${userId}`, {
+            method: 'GET', // Keep the method as GET
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user settings');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                // Update your form fields with the received data
+                document.getElementById('fullname').value = data.fullname;
+                document.getElementById('birthdate').value = data.birthdate;
+                document.getElementById('sex').value = data.sex;
+                document.getElementById('address').value = data.address;
+                document.getElementById('username').value = data.username;
+                // Add code to update other form fields
+            })
+            .catch(error => {
+                console.error('Error fetching user settings:', error);
+                // Handle error as needed (e.g., display an error message to the user)
+            });
+    }
+
+    handleUserSettings();
 </script>
