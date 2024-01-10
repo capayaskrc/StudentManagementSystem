@@ -160,11 +160,12 @@ function handle_login()
             // Generate and store the authentication token
             $token = generateAuthToken($row['user_id'], $username, 'your_secret_key');
             $_SESSION['auth_token'] = $token;
-
+            $_SESSION['username'] = $username;
             $response = [
                 "token" => $token,
                 "role" => $row['role_name'],
-                "message" => "Login successful"
+                "message" => "Login successful",
+                "username" =>  $username
             ];
             echo json_encode($response);
         } else {

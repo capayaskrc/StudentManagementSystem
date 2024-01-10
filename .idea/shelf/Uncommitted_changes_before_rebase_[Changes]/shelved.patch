@@ -1,0 +1,208 @@
+Index: auth/db_connection.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n$servername = \"localhost\";\r\n$username = \"root\";\r\n$password = \"\";\r\n$dbname = \"sms_db\";\r\n\r\n$conn = new mysqli($servername, $username, $password, $dbname);\r\n\r\nif ($conn->connect_error) {\r\n    die(\"Connection failed: \" . $conn->connect_error);\r\n}\r\n?>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/auth/db_connection.php b/auth/db_connection.php
+--- a/auth/db_connection.php	(revision 6e2d1fc4087331697d9b99fa5f05788b2f21630f)
++++ b/auth/db_connection.php	(date 1704538487855)
+@@ -2,7 +2,7 @@
+ $servername = "localhost";
+ $username = "root";
+ $password = "";
+-$dbname = "sms_db";
++$dbname = "sms_db_1";
+ 
+ $conn = new mysqli($servername, $username, $password, $dbname);
+ 
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"edcc68ef-3103-4765-b355-a2542323782e\" name=\"Changes\" comment=\"updated the api.php so that  the users.php view users can view all the users.php\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/admin/users.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/admin/users.php\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/auth/api.php\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/auth/api.php\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"ComposerSettings\">\r\n    <execution />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"JavaScript File\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"development_user\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\">\r\n    <option name=\"selectedUrlAndAccountId\">\r\n      <UrlAndAccount>\r\n        <option name=\"accountId\" value=\"faff048a-1cd1-47bc-afb9-58dfdc4364d2\" />\r\n        <option name=\"url\" value=\"https://github.com/capayaskrc/StudentManagementSystem.git\" />\r\n      </UrlAndAccount>\r\n    </option>\r\n  </component>\r\n  <component name=\"KubernetesApiProvider\">{\r\n  &quot;contexts&quot;: [\r\n    {\r\n      &quot;name&quot;: &quot;docker-desktop&quot;\r\n    }\r\n  ],\r\n  &quot;isMigrated&quot;: true\r\n}</component>\r\n  <component name=\"KubernetesSettings\">\r\n    <option name=\"contextName\" value=\"docker-desktop\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"PhpWorkspaceProjectConfiguration\" interpreter_name=\"C:\\xampp\\php\\php.exe\" />\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 7\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2ZkB5jED87AKxMJxX4L2H6cR0at\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/xampp/htdocs/StudentManagementSystem&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.Issue.Navigation&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"edcc68ef-3103-4765-b355-a2542323782e\" name=\"Changes\" comment=\"\" />\r\n      <created>1702956016018</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1702956016018</updated>\r\n      <workItem from=\"1702956017117\" duration=\"15513000\" />\r\n      <workItem from=\"1703077522226\" duration=\"6530000\" />\r\n      <workItem from=\"1703164203723\" duration=\"1235000\" />\r\n      <workItem from=\"1703165669867\" duration=\"232000\" />\r\n      <workItem from=\"1703165910780\" duration=\"2241000\" />\r\n      <workItem from=\"1703168389125\" duration=\"326000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"working login page will direct to dashboard\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1702956840279</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702956840279</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"added student dashboard, admin_dashboard, teacher_dashboard and fix the bug error404 when login.php\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1702957538962</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702957538962</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"updated the code on index.php for flexible code. added footer and header.\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1702959778115</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702959778115</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"added working addUser and fix the error on api and login which is change the route\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1702965065688</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702965065688</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"added update password for default users\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1702968953672</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702968953672</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00006\" summary=\"updated api.php\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1702976162464</created>\r\n      <option name=\"number\" value=\"00006\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1702976162465</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00007\" summary=\"added session expire and session timeout, added the js for addUser, and change minor missing include in every php files\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1703079902556</created>\r\n      <option name=\"number\" value=\"00007\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1703079902556</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00008\" summary=\"change the fetch url\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1703084005793</created>\r\n      <option name=\"number\" value=\"00008\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00008\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1703084005793</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00009\" summary=\"change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1703167529108</created>\r\n      <option name=\"number\" value=\"00009\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00009\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1703167529108</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00010\" summary=\"change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1703168428520</created>\r\n      <option name=\"number\" value=\"00010\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00010\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1703168428520</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00011\" summary=\"change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1703168487869</created>\r\n      <option name=\"number\" value=\"00011\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00011\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1703168487869</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00012\" summary=\"change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1703168540143</created>\r\n      <option name=\"number\" value=\"00012\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00012\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1703168540143</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00013\" summary=\"updated the api.php so that  the users.php view users can view all the users.php\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1703771190374</created>\r\n      <option name=\"number\" value=\"00013\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00013\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1703771190374</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"14\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"main\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"working login page will direct to dashboard\" />\r\n    <MESSAGE value=\"added student dashboard, admin_dashboard, teacher_dashboard and fix the bug error404 when login.php\" />\r\n    <MESSAGE value=\"updated the code on index.php for flexible code. added footer and header.\" />\r\n    <MESSAGE value=\"added working addUser and fix the error on api and login which is change the route\" />\r\n    <MESSAGE value=\"added update password for default users\" />\r\n    <MESSAGE value=\"updated api.php\" />\r\n    <MESSAGE value=\"added session expire and session timeout, added the js for addUser, and change minor missing include in every php files\" />\r\n    <MESSAGE value=\"change the fetch url\" />\r\n    <MESSAGE value=\"change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course\" />\r\n    <MESSAGE value=\"updated the api.php so that  the users.php view users can view all the users.php\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"updated the api.php so that  the users.php view users can view all the users.php\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 6e2d1fc4087331697d9b99fa5f05788b2f21630f)
++++ b/.idea/workspace.xml	(date 1704691326296)
+@@ -4,10 +4,9 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="edcc68ef-3103-4765-b355-a2542323782e" name="Changes" comment="updated the api.php so that  the users.php view users can view all the users.php">
++    <list default="true" id="edcc68ef-3103-4765-b355-a2542323782e" name="Changes" comment="added dashboard for teacher the details">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/admin/users.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/users.php" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/auth/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/auth/api.php" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/auth/db_connection.php" beforeDir="false" afterPath="$PROJECT_DIR$/auth/db_connection.php" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -74,7 +73,7 @@
+     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/xampp/htdocs/StudentManagementSystem&quot;,
++    &quot;last_opened_file_path&quot;: &quot;C:/Users/Kayl/Local Sites/fa-alpha-live&quot;,
+     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+@@ -98,6 +97,18 @@
+       <workItem from="1703165669867" duration="232000" />
+       <workItem from="1703165910780" duration="2241000" />
+       <workItem from="1703168389125" duration="326000" />
++      <workItem from="1703813753637" duration="3223000" />
++      <workItem from="1703856534091" duration="2616000" />
++      <workItem from="1703893628340" duration="6165000" />
++      <workItem from="1704163160983" duration="1743000" />
++      <workItem from="1704198706477" duration="8927000" />
++      <workItem from="1704244595072" duration="782000" />
++      <workItem from="1704536780303" duration="2087000" />
++      <workItem from="1704543338147" duration="1281000" />
++      <workItem from="1704613372835" duration="12000" />
++      <workItem from="1704632068501" duration="6752000" />
++      <workItem from="1704677417605" duration="9000" />
++      <workItem from="1704690844000" duration="473000" />
+     </task>
+     <task id="LOCAL-00001" summary="working login page will direct to dashboard">
+       <option name="closed" value="true" />
+@@ -195,15 +206,111 @@
+       <option name="project" value="LOCAL" />
+       <updated>1703168540143</updated>
+     </task>
+-    <task id="LOCAL-00013" summary="updated the api.php so that  the users.php view users can view all the users.php">
++    <task id="LOCAL-00013" summary="added the api for courses and working viewCourses and add courses">
+       <option name="closed" value="true" />
+-      <created>1703771190374</created>
++      <created>1703858914696</created>
+       <option name="number" value="00013" />
+       <option name="presentableId" value="LOCAL-00013" />
+       <option name="project" value="LOCAL" />
+-      <updated>1703771190374</updated>
++      <updated>1703858914696</updated>
++    </task>
++    <task id="LOCAL-00014" summary="added TODO">
++      <option name="closed" value="true" />
++      <created>1703859117721</created>
++      <option name="number" value="00014" />
++      <option name="presentableId" value="LOCAL-00014" />
++      <option name="project" value="LOCAL" />
++      <updated>1703859117721</updated>
++    </task>
++    <task id="LOCAL-00015" summary="added ui on the courses.php, working add courses, view courses">
++      <option name="closed" value="true" />
++      <created>1703896917339</created>
++      <option name="number" value="00015" />
++      <option name="presentableId" value="LOCAL-00015" />
++      <option name="project" value="LOCAL" />
++      <updated>1703896917339</updated>
++    </task>
++    <task id="LOCAL-00016" summary="fix the table on courses and users">
++      <option name="closed" value="true" />
++      <created>1703899013096</created>
++      <option name="number" value="00016" />
++      <option name="presentableId" value="LOCAL-00016" />
++      <option name="project" value="LOCAL" />
++      <updated>1703899013096</updated>
++    </task>
++    <task id="LOCAL-00017" summary="fix the inputgroup of search container in usrs">
++      <option name="closed" value="true" />
++      <created>1703899716914</created>
++      <option name="number" value="00017" />
++      <option name="presentableId" value="LOCAL-00017" />
++      <option name="project" value="LOCAL" />
++      <updated>1703899716914</updated>
++    </task>
++    <task id="LOCAL-00018" summary="working update modal in users.php">
++      <option name="closed" value="true" />
++      <created>1704206239161</created>
++      <option name="number" value="00018" />
++      <option name="presentableId" value="LOCAL-00018" />
++      <option name="project" value="LOCAL" />
++      <updated>1704206239161</updated>
++    </task>
++    <task id="LOCAL-00019" summary="working add course and delete course">
++      <option name="closed" value="true" />
++      <created>1704206943706</created>
++      <option name="number" value="00019" />
++      <option name="presentableId" value="LOCAL-00019" />
++      <option name="project" value="LOCAL" />
++      <updated>1704206943706</updated>
++    </task>
++    <task id="LOCAL-00020" summary="done adding view student by you course and added add course specific for teacher.">
++      <option name="closed" value="true" />
++      <created>1704543658421</created>
++      <option name="number" value="00020" />
++      <option name="presentableId" value="LOCAL-00020" />
++      <option name="project" value="LOCAL" />
++      <updated>1704543658421</updated>
++    </task>
++    <task id="LOCAL-00021" summary="done adding detail setting api and update password api">
++      <option name="closed" value="true" />
++      <created>1704544037415</created>
++      <option name="number" value="00021" />
++      <option name="presentableId" value="LOCAL-00021" />
++      <option name="project" value="LOCAL" />
++      <updated>1704544037415</updated>
++    </task>
++    <task id="LOCAL-00022" summary="update the footer.php">
++      <option name="closed" value="true" />
++      <created>1704632376896</created>
++      <option name="number" value="00022" />
++      <option name="presentableId" value="LOCAL-00022" />
++      <option name="project" value="LOCAL" />
++      <updated>1704632376896</updated>
+     </task>
+-    <option name="localTasksCounter" value="14" />
++    <task id="LOCAL-00023" summary="updated login with auth_token and teacher_dashboard.php with data fetch">
++      <option name="closed" value="true" />
++      <created>1704638081093</created>
++      <option name="number" value="00023" />
++      <option name="presentableId" value="LOCAL-00023" />
++      <option name="project" value="LOCAL" />
++      <updated>1704638081093</updated>
++    </task>
++    <task id="LOCAL-00024" summary="added dashboard for teacher the details">
++      <option name="closed" value="true" />
++      <created>1704638511084</created>
++      <option name="number" value="00024" />
++      <option name="presentableId" value="LOCAL-00024" />
++      <option name="project" value="LOCAL" />
++      <updated>1704638511084</updated>
++    </task>
++    <task id="LOCAL-00025" summary="added dashboard for teacher the details">
++      <option name="closed" value="true" />
++      <created>1704638673283</created>
++      <option name="number" value="00025" />
++      <option name="presentableId" value="LOCAL-00025" />
++      <option name="project" value="LOCAL" />
++      <updated>1704638673283</updated>
++    </task>
++    <option name="localTasksCounter" value="26" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -242,7 +349,18 @@
+     <MESSAGE value="added session expire and session timeout, added the js for addUser, and change minor missing include in every php files" />
+     <MESSAGE value="change the fetch url" />
+     <MESSAGE value="change the fetch url endpoint, make the header and navbar reusable code. change the add course to course.php for compact for view course and add course" />
+-    <MESSAGE value="updated the api.php so that  the users.php view users can view all the users.php" />
+-    <option name="LAST_COMMIT_MESSAGE" value="updated the api.php so that  the users.php view users can view all the users.php" />
++    <MESSAGE value="added the api for courses and working viewCourses and add courses" />
++    <MESSAGE value="added TODO" />
++    <MESSAGE value="added ui on the courses.php, working add courses, view courses" />
++    <MESSAGE value="fix the table on courses and users" />
++    <MESSAGE value="fix the inputgroup of search container in usrs" />
++    <MESSAGE value="working update modal in users.php" />
++    <MESSAGE value="working add course and delete course" />
++    <MESSAGE value="done adding view student by you course and added add course specific for teacher." />
++    <MESSAGE value="done adding detail setting api and update password api" />
++    <MESSAGE value="update the footer.php" />
++    <MESSAGE value="updated login with auth_token and teacher_dashboard.php with data fetch" />
++    <MESSAGE value="added dashboard for teacher the details" />
++    <option name="LAST_COMMIT_MESSAGE" value="added dashboard for teacher the details" />
+   </component>
+ </project>
+\ No newline at end of file
