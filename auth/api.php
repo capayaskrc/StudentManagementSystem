@@ -180,14 +180,15 @@ function handle_login()
     }
 }
 
-function authenticate_user()
-{
-    if (!isset($_SESSION['user_id'])) {
-        http_response_code(401); // Unauthorized
+function authenticate_user() {
+    session_start();
+    if (!isset($_SESSION['auth_token']) || !validate_token($_SESSION['auth_token'])) {
+        http_response_code(401);
         echo json_encode(["error" => "Unauthorized"]);
         exit();
     }
 }
+
 
 function handle_addUser()
 {
@@ -643,32 +644,99 @@ function handle_update_password()
 {
     global $conn;
 
-    // Check if the user making the request is authenticated
-    authenticate_user();
-
     // Get the user ID from the session
     $userId = $_SESSION['user_id'];
-
-    // Get the new password from the request body
+    // Get the current and new passwords from the request body
     $data = json_decode(file_get_contents("php://input"), true);
-    $newPassword = mysqli_real_escape_string($conn, $data['new_password']);
+    $currentPassword = mysqli_real_escape_string($conn, $data['currentPassword']);
+    $newPassword = mysqli_real_escape_string($conn, $data['newPassword']);
 
-    // Update the user's password in the database
-    $hashedPassword = md5($newPassword); // You may want to use a stronger hashing algorithm
-    $updatePasswordSql = "UPDATE User SET Password = ? WHERE user_id = ?";
-    $stmt = $conn->prepare($updatePasswordSql);
-    $stmt->bind_param("si", $hashedPassword, $userId);
+    // Fetch the current hashed password from the database (assuming MD5 hashing)
+    $fetchPasswordSql = "SELECT password FROM user WHERE user_id = ?";
+    $stmtFetch = $conn->prepare($fetchPasswordSql);
 
-    if ($stmt->execute()) {
-        http_response_code(200); // OK
-        echo json_encode(["message" => "Password updated successfully"]);
-    } else {
+    if (!$stmtFetch) {
+        // Check for SQL error
+        $response = ["status" => "error", "message" => "Prepare failed: " . $conn->error];
+        echo json_encode($response);
         http_response_code(500); // Internal Server Error
-        echo json_encode(["error" => "Error updating password"]);
+        exit;
     }
 
-    $stmt->close();
+    $stmtFetch->bind_param("i", $userId);
+    $stmtFetch->execute();
+
+    if (!$stmtFetch->execute()) {
+        // Check for SQL execution error
+        $response = ["status" => "error", "message" => "Execute failed: " . $stmtFetch->error];
+        echo json_encode($response);
+        http_response_code(500); // Internal Server Error
+        exit;
+    }
+
+    $stmtFetch->store_result();
+
+    if ($stmtFetch->num_rows == 1) {
+        // User found, fetch the hashed password
+        $stmtFetch->bind_result($hashedPassword);
+        $stmtFetch->fetch();
+
+        // Verify the current password (using MD5 hashing)
+        if (md5($currentPassword) === $hashedPassword) {
+            // Current password is correct, proceed with the update
+
+            // Hash the new password (using MD5 hashing)
+            $hashedNewPassword = md5($newPassword);
+
+            // Update the user's password in the database
+            $updatePasswordSql = "UPDATE user SET password = ? WHERE user_id = ?";
+            $stmtUpdate = $conn->prepare($updatePasswordSql);
+
+            if (!$stmtUpdate) {
+                // Check for SQL error
+                $response = ["status" => "error", "message" => "Prepare failed: " . $conn->error];
+                echo json_encode($response);
+                http_response_code(500); // Internal Server Error
+                exit;
+            }
+
+            $stmtUpdate->bind_param("si", $hashedNewPassword, $userId);
+
+            if ($stmtUpdate->execute()) {
+                // Password updated successfully
+                $response = ["status" => "success", "message" => "Password updated successfully"];
+                echo json_encode($response);
+                http_response_code(200); // OK
+            } else {
+                // Error updating password
+                $response = ["status" => "error", "message" => "Error updating password"];
+                echo json_encode($response);
+                http_response_code(500); // Internal Server Error
+            }
+
+            $stmtUpdate->close();
+        } else {
+            // Current password is incorrect
+            $response = ["status" => "error", "message" => "Incorrect current password"];
+            echo json_encode($response);
+            http_response_code(401); // Unauthorized
+        }
+    } else {
+        // No user found with the provided user_id
+        $response = ["status" => "error", "message" => "User not found"];
+        echo json_encode($response);
+        http_response_code(404); // Not Found
+    }
+
+    $stmtFetch->close();
 }
+
+
+
+
+
+
+
 
 function handle_user_settings()
 {
