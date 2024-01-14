@@ -786,25 +786,30 @@ function handle_user_settings()
 
 
 
-    function handle_getAllCourses() {
+function handle_getAllCourses() {
     global $conn;
 
-    $sql = "SELECT course_id, course_name FROM course";
+    $sql = "SELECT c.course_id, c.course_name, c.user_id, u.fullname AS user_name
+            FROM course c
+            LEFT JOIN user u ON c.user_id = u.user_id";
+
     $result = $conn->query($sql);
 
     $courses = array();
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $courses[] = $row;
-            }
-            echo json_encode($courses);
-        } else {
-            http_response_code(404); // Not Found
-            echo json_encode(["error" => "No users found"]);
-        }
 
-        return $courses;
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $courses[] = $row;
+        }
+        echo json_encode($courses);
+    } else {
+        http_response_code(404); // Not Found
+        echo json_encode(["error" => "No courses found"]);
     }
+
+    return $courses;
+}
+
 function handle_addCourse()
 {
     global $conn;
