@@ -181,7 +181,6 @@ function handle_login()
 }
 
 function authenticate_user() {
-    session_start();
     if (!isset($_SESSION['auth_token']) || !validate_token($_SESSION['auth_token'])) {
         http_response_code(401);
         echo json_encode(["error" => "Unauthorized"]);
@@ -189,6 +188,9 @@ function authenticate_user() {
     }
 }
 
+function validate_token($token) {
+    return !empty($token);
+}
 
 function handle_addUser()
 {
