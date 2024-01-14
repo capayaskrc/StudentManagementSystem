@@ -3,8 +3,35 @@ include '../layout/header_student.php';
 ?>
 
 <section id="courses" style="container-fluid justify-content-md-center col-md-8">
-    <h1>Courses</h1>
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Courses Box -->
+            <div class="col-md-4">
+                <div class="card border-primary mb-3 h-100">
+                    <a href="#" class="card-link" onclick="boxClicked('Students')">
+                    <div class="card-body text-primary d-flex align-items-center justify-content-center mt-3">
+                        <h5 class="card-title" style="font-size: 24px;">Courses</h5>
+                    </div>
+                    </a>
+                </div>
+            </div>
 
+            <!-- Students Box -->
+            <div class="col-md-4">
+                <div class="card border-primary mb-3 h-100">
+                    <a href="#" class="card-link" onclick="boxClicked('Students')">
+                        <div class="card-body text-primary d-flex align-items-center justify-content-center mt-3">
+                            <h5 class="card-title" style="font-size: 24px;">Students</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    <h1>Courses</h1>
     <!-- Bootstrap Modal for Enrollment -->
     <div class="modal fade" id="enrollModal" tabindex="-1" role="dialog" aria-labelledby="enrollModalLabel"
         aria-hidden="true">
@@ -36,7 +63,7 @@ include '../layout/header_student.php';
             </div>
         </div>
     </div>
-
+    </div>
 
     <!-- Bootstrap Table -->
     <div class="table-responsive">

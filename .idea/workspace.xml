@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="edcc68ef-3103-4765-b355-a2542323782e" name="Changes" comment="fix the error on change password.">
+    <list default="true" id="edcc68ef-3103-4765-b355-a2542323782e" name="Changes" comment="added a view name which assign teacher in the courses in admin panel">
+      <change afterPath="$PROJECT_DIR$/teacher/view_course.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/courses.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/courses.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/auth/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/student/student_dashboard.php" beforeDir="false" afterPath="$PROJECT_DIR$/student/student_dashboard.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teacher/teacher_dashboard.php" beforeDir="false" afterPath="$PROJECT_DIR$/teacher/teacher_dashboard.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +130,7 @@
       <workItem from="1704801181439" duration="3023000" />
       <workItem from="1704845047046" duration="10258000" />
       <workItem from="1704867073922" duration="1210000" />
-      <workItem from="1705243664414" duration="1709000" />
+      <workItem from="1705243664414" duration="2920000" />
     </task>
     <task id="LOCAL-00001" summary="working login page will direct to dashboard">
       <option name="closed" value="true" />
@@ -363,7 +364,15 @@
       <option name="project" value="LOCAL" />
       <updated>1705244015468</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="added a view name which assign teacher in the courses in admin panel">
+      <option name="closed" value="true" />
+      <created>1705245488029</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1705245488029</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -393,7 +402,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="working login page will direct to dashboard" />
     <MESSAGE value="added student dashboard, admin_dashboard, teacher_dashboard and fix the bug error404 when login.php" />
     <MESSAGE value="updated the code on index.php for flexible code. added footer and header." />
     <MESSAGE value="added working addUser and fix the error on api and login which is change the route" />
@@ -418,6 +426,7 @@
     <MESSAGE value="added settings and dropdown for the username and make the reusable code dynamic for all the 3 user level" />
     <MESSAGE value="can view the information in settings.php" />
     <MESSAGE value="fix the error on change password." />
-    <option name="LAST_COMMIT_MESSAGE" value="fix the error on change password." />
+    <MESSAGE value="added a view name which assign teacher in the courses in admin panel" />
+    <option name="LAST_COMMIT_MESSAGE" value="added a view name which assign teacher in the courses in admin panel" />
   </component>
 </project>
