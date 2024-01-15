@@ -2,8 +2,9 @@
 include '../layout/header_student.php';
 ?>
 
-
+<section id="courses" class="container-fluid justify-content-md-center col-md-8">
     <h1>Courses</h1>
+
     <!-- Bootstrap Modal for Enrollment -->
     <div class="modal fade" id="enrollModal" tabindex="-1" role="dialog" aria-labelledby="enrollModalLabel"
         aria-hidden="true">
@@ -19,7 +20,7 @@ include '../layout/header_student.php';
                 <div class="modal-body">
                     <!-- Add your form fields for enrolling a student -->
                     <form>
-                        <input type="hidden" id="enrollModalCourseId" name="courseId"> <!-- Add this line -->
+                        <input type="hidden" id="unenrollModalCourseId" name="courseId"> <!-- Add this line -->
                         <div class="form-group">
                             <label for="studentId">Student ID</label>
                             <input type="text" class="form-control" id="studentId" placeholder="Enter Student ID">
@@ -35,15 +36,16 @@ include '../layout/header_student.php';
             </div>
         </div>
     </div>
-    </div>
+
 
     <!-- Bootstrap Table -->
     <div class="table-responsive">
         <table class="table table-bordered" id="courseTable">
             <thead>
                 <tr>
-                    <th class="text-center align-middle" style="width: 10%">Course ID</th>
-                    <th class="text-center align-middle" style="width: 60%">Course Name</th>
+                    <th class="text-center align-middle" style="width: 10%">Student ID</th>
+                    <th class="text-center align-middle" style="width: 60%">Student Name</th>
+                    <th class="text-center align-middle" style="width: 60%">Year Level</th>
                     <th class="text-center align-middle" style="width: 30%">Action</th>
                 </tr>
             </thead>
@@ -59,13 +61,16 @@ include '../layout/header_student.php';
         const auth_token = '<?php echo $_SESSION['auth_token']; ?>';
         const userId = '<?php echo $_SESSION['user_id']; ?>';
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = parseInt(urlParams.get('course_id'));
+
         document.addEventListener("DOMContentLoaded", function () {
         fetchAllCourses();
     });
 
 
     function fetchAllCourses() {
-        fetch(`../auth/api.php?dashboard&userRole=${userRole}&user_id=${userId}`, {
+        fetch(`../auth/api.php?class&userRole=${userRole}&user_id=${userId}&courseId=${courseId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -78,7 +83,6 @@ include '../layout/header_student.php';
                 return response.json();
             })
             .then(data => {
-                console.log(data)
                 populateCourseTable(data);
             })
             .catch(error => {
@@ -87,50 +91,34 @@ include '../layout/header_student.php';
             });
     }
 
-    function populateCourseTable(courses) {
+    function populateCourseTable(students) {
         const courseTable = document.getElementById('courseTable');
         const tbody = courseTable.getElementsByTagName('tbody')[0];
         tbody.innerHTML = ''; // Clear existing rows
 
-        courses.courses_taught.forEach(course => {
+        students.forEach(student => {
             const row = tbody.insertRow();
-            row.insertCell(0).textContent = course.course_id;
-            row.insertCell(1).textContent = course.course_name;
+            row.insertCell(0).textContent = student.student_id;
+            row.insertCell(1).textContent = student.fullname;
+            row.insertCell(2).textContent = student.year_lvl;
             row.cells[0].classList.add('text-center', 'align-middle');
             row.cells[1].classList.add('align-middle');
+            row.cells[2].classList.add('align-middle');
 
             // Add "Enroll" button
             const enrollButton = document.createElement('button');
-            enrollButton.textContent = 'Enroll';
+            enrollButton.textContent = 'Unenroll';
             enrollButton.className = 'btn btn-success btn-sm';
             enrollButton.onclick = function () {
-                openEnrollModal(course.course_id);
+                unenrollStudent(student.student_id, );
             };
 
-            // Add "Assign Teacher" button
-            const assignTeacherButton = document.createElement('button');
-            assignTeacherButton.textContent = 'Assign Teacher';
-            assignTeacherButton.className = 'btn btn-info btn-sm';
-            assignTeacherButton.onclick = function () {
-                // Call the function to handle teacher assignment here
-                openAssignInstructorModal(course.course_id);
-            };
-
-            // Add "Delete" button
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
-            deleteButton.className = 'btn btn-danger btn-sm';
-            deleteButton.onclick = function () {
-                deleteCourse(course.course_id);
-            };
-
-            const cell = row.insertCell(2);
+            const cell = row.insertCell(3);
             row.cells[2].classList.add('text-center', 'align-middle');
             cell.appendChild(enrollButton);
 
             row.addEventListener('click', () => {
-                const settingsUrl = './course_class.php?course_id=' + course.course_id;
-                // const settingsUrl = './course_class.php?user_role='+ userRole +'&course_id=' + course.course_id;
+                const settingsUrl = '../teacher/courseClass.php';
                 window.location.href = settingsUrl;
             });
             row.style.cursor = 'pointer';
@@ -138,73 +126,42 @@ include '../layout/header_student.php';
     }
 
 
-    function enrollStudent() {
-    const courseId = document.getElementById("enrollModalCourseId").value;
-    const studentId = document.getElementById("studentId").value;
+    function unenrollStudent(studentId) {
+        // Prepare enrollment data
+        const unenrollData = {
+            student_id: parseInt(studentId),
+            course_id: parseInt(courseId),
+        };
 
-    // Validate student ID (you can add more validation as needed)
-    if (studentId.trim() === "") {
-        alert("Please enter a student ID");
-        return;
-    }
+        // Send enrollment request to the backend
+        fetch(`../auth/api.php?unenroll&courseID=${courseId}&studentID=${studentId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(unenrollData),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to unenroll student');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle successful enrollment (you can show a success message or perform additional actions)
+            console.log('Enrollment successful:', data);
 
-    // Prepare enrollment data
-    const enrollmentData = {
-        student_id: parseInt(studentId),
-        course_id: parseInt(courseId),
-    };
-
-    // Send enrollment request to the backend
-    fetch('../auth/api.php?enrollment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(enrollmentData),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to enroll student');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Handle successful enrollment (you can show a success message or perform additional actions)
-        console.log('Enrollment successful:', data);
-
-        // Refresh the course list or perform any other necessary actions
-        fetchAllCourses();
-    })
-    .catch(error => {
-        console.error('Error enrolling student:', error);
-        // Handle error (you can show an error message to the user)
-    })
-    .finally(() => {
-        // Close the enrollment modal
-        closeEnrollModal();
-    });
-}
-
-
-    // Function to open the "Enroll Student" modal
-    function openEnrollModal(courseId) {
-        // Set the course ID in the modal (if needed)
-        document.getElementById('enrollModalCourseId').value = courseId;
-
-        // Show the modal
-        $('#enrollModal').modal('show');
-    }
-
-    // Function to close the "Enroll Student" modal
-    function closeEnrollModal() {
-        // Hide the modal
-        $('#enrollModal').modal('hide');
-        // Manually remove the modal backdrop
-        document.body.classList.remove('modal-open');
-        const modalBackdrops = document.getElementsByClassName('modal-backdrop');
-        for (let backdrop of modalBackdrops) {
-            backdrop.parentNode.removeChild(backdrop);
-        }
+            // Refresh the course list or perform any other necessary actions
+            fetchAllCourses();
+        })
+        .catch(error => {
+            console.error('Error enrolling student:', error);
+            // Handle error (you can show an error message to the user)
+        })
+        .finally(() => {
+            // Close the enrollment modal
+            closeEnrollModal();
+        });
     }
 
     </script>

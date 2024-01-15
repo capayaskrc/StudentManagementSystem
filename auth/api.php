@@ -35,7 +35,7 @@ switch ($request_method) {
                     handle_student_dashboard();
                     break;
                 case 'teacher':
-                    handle_teacher_dashboard();
+                    handle_teacher_dashboard($_GET['user_id']);
                     break;
                 case 'admin':
                     handle_admin_dashboard();
@@ -50,8 +50,18 @@ switch ($request_method) {
             handle_view_user_all();
         } elseif (isset($_GET['courses'])) {
             handle_getAllCourses();
-        }  elseif (isset($_GET['settings']) && isset($_GET['user_id'])) {
-            handle_user_settings($_GET['user_id']);
+        } elseif (isset($_GET['settings'])) {
+            handle_user_settings();
+        } elseif (isset($_GET['class'])) {
+            $userRole = isset($_GET['userRole']) ? $_GET['userRole'] : '';
+            switch ($userRole) {
+                case 'student':
+                    // handle_student_class($_GET['user_id']);
+                    break;
+                case 'teacher':
+                    handle_teacher_class($_GET['user_id'], $_GET['courseId']);
+                    break;
+            }
         } else {
             http_response_code(400);
             echo json_encode(["error" => "Invalid request"]);
@@ -160,12 +170,11 @@ function handle_login()
             // Generate and store the authentication token
             $token = generateAuthToken($row['user_id'], $username, 'your_secret_key');
             $_SESSION['auth_token'] = $token;
-            $_SESSION['username'] = $username;
+
             $response = [
                 "token" => $token,
                 "role" => $row['role_name'],
-                "message" => "Login successful",
-                "username" =>  $username
+                "message" => "Login successful"
             ];
             echo json_encode($response);
         } else {
@@ -179,6 +188,7 @@ function handle_login()
         echo json_encode(["error" => "Invalid credentials"]);
     }
 }
+
 
 function authenticate_user() {
     if (!isset($_SESSION['auth_token']) || !validate_token($_SESSION['auth_token'])) {
@@ -463,11 +473,92 @@ function handle_teacher_dashboard()
                 while ($row = $resultEnrollments->fetch_assoc()) {
                     $enrollments[] = $row;
                 }
-                $course['enrollments'] = $enrollments;
+                $teacher['enrollments'] = $enrollments;
             }
         }
 
         echo json_encode($teacher);
+    } else {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "Invalid user_id parameter"]);
+    }
+}
+
+function handle_teacher_class()
+{
+    global $conn;
+
+    // Fetch teacher details
+    $userId = isset($_GET['user_id']) ? $_GET['user_id'] : '';
+    $courseId = isset($_GET['courseId']) ? $_GET['courseId'] : '';
+
+    if ($userId !== '') {
+        $sql = "SELECT * FROM user WHERE user_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $userId); // Assuming user_id is an integer
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+
+        if ($result === false) {
+            // Handle the SQL error
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "SQL error: " . $conn->error]);
+            return;
+        }
+
+        $sql = "SELECT 
+                student.user_id,
+                student.student_id,
+                user.fullname,
+                student.year_lvl
+            FROM 
+                enrollment
+            JOIN 
+                course ON enrollment.course_id = course.course_id
+            JOIN 
+                student ON enrollment.student_id = student.student_id
+            JOIN 
+                user ON student.user_id = user.user_id
+            WHERE 
+                course.user_id = ?
+                AND course.course_id = ?";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $userId, $courseId); // Assuming user_id and course_id are integers
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result === false) {
+            // Handle the SQL error
+            return ["error" => "SQL error: " . $conn->error];
+        }
+
+        $students = [];
+        while ($row = $result->fetch_assoc()) {
+            $students[] = $row;
+        }
+
+        // Fetch students enrolled in each course taught by the teacher
+        // foreach ($courses as &$course) {
+        //     $courseId = $course['course_id'];
+        //     $sqlEnrollments = "SELECT User.fullname, Enrollment.date_enrolled
+        //                        FROM Enrollment
+        //                        JOIN User ON Enrollment.student_id = User.user_id
+        //                        WHERE Enrollment.course_id = $courseId";
+
+        //     $resultEnrollments = $conn->query($sqlEnrollments);
+
+        //     if ($resultEnrollments->num_rows > 0) {
+        //         $enrollments = [];
+        //         while ($row = $resultEnrollments->fetch_assoc()) {
+        //             $enrollments[] = $row;
+        //         }
+        //         $course['enrollments'] = $enrollments;
+        //     }
+        // }
+
+        echo json_encode($students);
     } else {
         http_response_code(400); // Bad Request
         echo json_encode(["error" => "Invalid user_id parameter"]);
@@ -646,144 +737,51 @@ function handle_update_password()
 {
     global $conn;
 
+    // Check if the user making the request is authenticated
+    authenticate_user();
+
     // Get the user ID from the session
     $userId = $_SESSION['user_id'];
-    // Get the current and new passwords from the request body
+
+    // Get the new password from the request body
     $data = json_decode(file_get_contents("php://input"), true);
-    $currentPassword = mysqli_real_escape_string($conn, $data['currentPassword']);
-    $newPassword = mysqli_real_escape_string($conn, $data['newPassword']);
+    $newPassword = mysqli_real_escape_string($conn, $data['new_password']);
 
-    // Fetch the current hashed password from the database (assuming MD5 hashing)
-    $fetchPasswordSql = "SELECT password FROM user WHERE user_id = ?";
-    $stmtFetch = $conn->prepare($fetchPasswordSql);
+    // Update the user's password in the database
+    $hashedPassword = md5($newPassword); // You may want to use a stronger hashing algorithm
+    $updatePasswordSql = "UPDATE User SET Password = ? WHERE user_id = ?";
+    $stmt = $conn->prepare($updatePasswordSql);
+    $stmt->bind_param("si", $hashedPassword, $userId);
 
-    if (!$stmtFetch) {
-        // Check for SQL error
-        $response = ["status" => "error", "message" => "Prepare failed: " . $conn->error];
-        echo json_encode($response);
-        http_response_code(500); // Internal Server Error
-        exit;
-    }
-
-    $stmtFetch->bind_param("i", $userId);
-    $stmtFetch->execute();
-
-    if (!$stmtFetch->execute()) {
-        // Check for SQL execution error
-        $response = ["status" => "error", "message" => "Execute failed: " . $stmtFetch->error];
-        echo json_encode($response);
-        http_response_code(500); // Internal Server Error
-        exit;
-    }
-
-    $stmtFetch->store_result();
-
-    if ($stmtFetch->num_rows == 1) {
-        // User found, fetch the hashed password
-        $stmtFetch->bind_result($hashedPassword);
-        $stmtFetch->fetch();
-
-        // Verify the current password (using MD5 hashing)
-        if (md5($currentPassword) === $hashedPassword) {
-            // Current password is correct, proceed with the update
-
-            // Hash the new password (using MD5 hashing)
-            $hashedNewPassword = md5($newPassword);
-
-            // Update the user's password in the database
-            $updatePasswordSql = "UPDATE user SET password = ? WHERE user_id = ?";
-            $stmtUpdate = $conn->prepare($updatePasswordSql);
-
-            if (!$stmtUpdate) {
-                // Check for SQL error
-                $response = ["status" => "error", "message" => "Prepare failed: " . $conn->error];
-                echo json_encode($response);
-                http_response_code(500); // Internal Server Error
-                exit;
-            }
-
-            $stmtUpdate->bind_param("si", $hashedNewPassword, $userId);
-
-            if ($stmtUpdate->execute()) {
-                // Password updated successfully
-                $response = ["status" => "success", "message" => "Password updated successfully"];
-                echo json_encode($response);
-                http_response_code(200); // OK
-            } else {
-                // Error updating password
-                $response = ["status" => "error", "message" => "Error updating password"];
-                echo json_encode($response);
-                http_response_code(500); // Internal Server Error
-            }
-
-            $stmtUpdate->close();
-        } else {
-            // Current password is incorrect
-            $response = ["status" => "error", "message" => "Incorrect current password"];
-            echo json_encode($response);
-            http_response_code(401); // Unauthorized
-        }
+    if ($stmt->execute()) {
+        http_response_code(200); // OK
+        echo json_encode(["message" => "Password updated successfully"]);
     } else {
-        // No user found with the provided user_id
-        $response = ["status" => "error", "message" => "User not found"];
-        echo json_encode($response);
-        http_response_code(404); // Not Found
-    }
-
-    $stmtFetch->close();
-}
-
-
-
-
-
-
-
-
-function handle_user_settings()
-{
-    global $conn;
-
-    // Check if the user_id parameter is provided
-    if (!isset($_GET['user_id'])) {
-        http_response_code(400); // Bad Request
-        echo json_encode(["error" => "Missing user_id parameter"]);
-        return;
-    }
-
-    $userId = $_GET['user_id'];
-
-    // Fetch user details excluding the password field
-    $sql = "SELECT user_id, username, fullname, birthdate, sex, address, role_id FROM user WHERE user_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $userId); // Assuming user_id is an integer
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result === false) {
-        // Handle the SQL error
         http_response_code(500); // Internal Server Error
-        echo json_encode(["error" => "SQL error: " . $stmt->error]);
-        return;
-    }
-
-    if ($result->num_rows == 1) {
-        $userDetails = $result->fetch_assoc();
-
-        // Additional logic (if needed) to fetch related data
-
-        echo json_encode($userDetails);
-    } else {
-        http_response_code(404); // Not Found
-        echo json_encode(["error" => "User not found"]);
+        echo json_encode(["error" => "Error updating password"]);
     }
 
     $stmt->close();
 }
 
+function handle_user_settings()
+{
+    global $conn;
 
+    $userId = $_SESSION['user_id'];
 
+    // Fetch user details
+    $sql = "SELECT * FROM users WHERE id = $userId";
+    $result = $conn->query($sql);
 
+    if ($result->num_rows == 1) {
+        $userDetails = $result->fetch_assoc();
+        echo json_encode($userDetails);
+    } else {
+        http_response_code(404); // Not Found
+        echo json_encode(["error" => "User not found"]);
+    }
+}
 
 
 function handle_getAllCourses() {
