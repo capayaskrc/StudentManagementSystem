@@ -5,14 +5,25 @@ include '../layout/header_student.php';
 <div class="container">
     <h1>Student Dashboard</h1>
 
-    <div id="student-info">
-        <!-- Student information will be displayed here dynamically using JavaScript -->
-    </div>
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Courses Box -->
+            <div class="col-md-4">
+                <div class="card border-primary mb-3">
+                    <div class="card-body text-primary">
+                        <h5 class="card-title">Courses</h5>
+                    </div>
+                </div>
+            </div>
 
-    <div class="courses-container">
-        <h2>Enrolled Courses</h2>
-        <div id="courses-list">
-            <!-- Enrolled courses will be displayed here dynamically using JavaScript -->
+            <!-- Students Box -->
+            <div class="col-md-4">
+                <div class="card border-primary mb-3">
+                    <div class="card-body text-primary">
+                        <h5 class="card-title">Students</h5>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

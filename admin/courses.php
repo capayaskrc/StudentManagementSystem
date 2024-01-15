@@ -88,7 +88,7 @@
                     <form>
                         <input type="hidden" id="assignInstructorModalCourseId" name="courseId"> <!-- Add this line -->
                         <div class="form-group">
-                            <label for="teacherId">Student ID</label>
+                            <label for="teacherId">Teacher ID</label>
                             <input type="text" class="form-control" id="teacherId" placeholder="Enter Teacher ID">
                         </div>
                         <!-- You can add more fields for student information if needed -->
@@ -224,12 +224,18 @@
 
             // Add "Assign Teacher" button
             const assignTeacherButton = document.createElement('button');
-            assignTeacherButton.textContent = 'Assign Teacher';
             assignTeacherButton.className = 'btn btn-info btn-sm';
             assignTeacherButton.onclick = function () {
-                // Call the function to handle teacher assignment here
                 openAssignInstructorModal(course.course_id);
             };
+
+            if (course.user_name) {
+                // If a teacher is assigned, display the teacher's name on the button
+                assignTeacherButton.textContent = `Assigned to: ${course.user_name}`;
+                assignTeacherButton.classList.add('assigned'); // Optional: Add a CSS class for styling
+            } else {
+                assignTeacherButton.textContent = 'Assign Teacher';
+            }
 
             // Add "Delete" button
             const deleteButton = document.createElement('button');
@@ -246,7 +252,6 @@
             cell.appendChild(deleteButton);
         });
     }
-
 
     function deleteCourse(courseId) {
         if (confirm("Are you sure you want to delete this course?")) {

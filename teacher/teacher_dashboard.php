@@ -2,9 +2,8 @@
 include '../layout/header_student.php';
 ?>
 
-<section id="courses" class="container-fluid justify-content-md-center col-md-8">
-    <h1>Courses</h1>
 
+    <h1>Courses</h1>
     <!-- Bootstrap Modal for Enrollment -->
     <div class="modal fade" id="enrollModal" tabindex="-1" role="dialog" aria-labelledby="enrollModalLabel"
         aria-hidden="true">
@@ -36,7 +35,7 @@ include '../layout/header_student.php';
             </div>
         </div>
     </div>
-
+    </div>
 
     <!-- Bootstrap Table -->
     <div class="table-responsive">

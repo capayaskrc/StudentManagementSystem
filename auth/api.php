@@ -190,19 +190,16 @@ function handle_login()
 }
 
 
-
-
-
-
-
-
-function authenticate_user()
-{
-    if (!isset($_SESSION['user_id'])) {
-        http_response_code(401); // Unauthorized
+function authenticate_user() {
+    if (!isset($_SESSION['auth_token']) || !validate_token($_SESSION['auth_token'])) {
+        http_response_code(401);
         echo json_encode(["error" => "Unauthorized"]);
         exit();
     }
+}
+
+function validate_token($token) {
+    return !empty($token);
 }
 
 function handle_addUser()
@@ -785,25 +782,32 @@ function handle_user_settings()
         echo json_encode(["error" => "User not found"]);
     }
 }
-    function handle_getAllCourses() {
+
+
+function handle_getAllCourses() {
     global $conn;
 
-    $sql = "SELECT course_id, course_name FROM course";
+    $sql = "SELECT c.course_id, c.course_name, c.user_id, u.fullname AS user_name
+            FROM course c
+            LEFT JOIN user u ON c.user_id = u.user_id";
+
     $result = $conn->query($sql);
 
     $courses = array();
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $courses[] = $row;
-            }
-            echo json_encode($courses);
-        } else {
-            http_response_code(404); // Not Found
-            echo json_encode(["error" => "No users found"]);
-        }
 
-        return $courses;
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $courses[] = $row;
+        }
+        echo json_encode($courses);
+    } else {
+        http_response_code(404); // Not Found
+        echo json_encode(["error" => "No courses found"]);
     }
+
+    return $courses;
+}
+
 function handle_addCourse()
 {
     global $conn;
