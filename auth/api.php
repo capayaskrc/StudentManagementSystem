@@ -383,18 +383,27 @@ function handle_student_dashboard()
 
     // Fetch student details
     $userId = $_SESSION['user_id'];
-    $sql = "SELECT * FROM users WHERE id = $userId";
+    $sql = "SELECT * FROM user WHERE user_id = $userId";
     $result = $conn->query($sql);
 
     if ($result->num_rows == 1) {
         $student = $result->fetch_assoc();
 
         // Fetch enrolled courses and grades
-        $sqlCourses = "SELECT Course.course_name, Enrollment.date_enrolled, Performance.grade
-                           FROM Enrollment
-                           JOIN Course ON Enrollment.course_id = Course.course_id
-                           JOIN Performance ON Enrollment.enrollment_id = Performance.enrollment_id
-                           WHERE Enrollment.student_id = $userId";
+        $sqlCourses = "SELECT 
+                            c.course_id,
+                            c.course_name,
+                            p.grade
+                        FROM 
+                            course c
+                        JOIN 
+                            enrollment e ON c.course_id = e.course_id
+                        JOIN 
+                            student s ON e.student_id = s.student_id
+                        JOIN 
+                            performance p ON e.enrollment_id = p.enrollment_id
+                        WHERE 
+                            s.user_id = $userId;";
 
         $resultCourses = $conn->query($sqlCourses);
 
