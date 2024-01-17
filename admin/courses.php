@@ -1,6 +1,6 @@
 <?php include '../layout/header_user.php'; ?>
 
-<section id="courses" class="container-fluid justify-content-md-center col-md-8">
+<section id="courses" class="container-fluid justify-content-md-center">
     <h1>Courses</h1>
     <!-- Bootstrap button for adding courses -->
     <button class="btn btn-primary" data-toggle="modal" data-target="#addCourseModal" onclick="openAddCourseModal()">Add

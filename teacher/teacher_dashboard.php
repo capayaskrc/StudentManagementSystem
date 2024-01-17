@@ -2,8 +2,8 @@
 include '../layout/header_student.php';
 ?>
 
-
-
+<section>
+<div class="container-fluid justify-content-md-center">
 <!-- Bootstrap Modal for Enrollment -->
 <div class="modal fade" id="enrollModal" tabindex="-1" role="dialog" aria-labelledby="enrollModalLabel"
     aria-hidden="true">
@@ -37,10 +37,10 @@ include '../layout/header_student.php';
     </div>
 </div>
 </div>
-<div class="above-table">
-    <h1>Courses</h1>
-    <button type="button" class="btn btn-primary" onclick="goToCourseClass()">Go to Course Class</button>
-</div>
+    <div class="container d-flex align-items-center justify-content-between mt-4 ml-2 mr-2">
+        <h1>Courses</h1>
+        <button type="button" class="btn btn-primary" onclick="goToCourseClass()">Go to Course Class</button>
+    </div>
 
 <!-- Bootstrap Table -->
 <div class="table-responsive">
@@ -57,7 +57,7 @@ include '../layout/header_student.php';
         </tbody>
     </table>
 </div>
-
+    </div>
 </section>
 
 <script>
@@ -84,7 +84,6 @@ include '../layout/header_student.php';
                 return response.json();
             })
             .then(data => {
-                console.log(data)
                 populateCourseTable(data);
             })
             .catch(error => {

@@ -353,16 +353,6 @@ function handle_enrollment()
 {
     global $conn;
 
-    // Check if the user making the request is a teacher or admin
-    //        $allowedRoles = ['teacher', 'admin'];
-    //        $userRole = $_SESSION['role'];
-    //
-    //        if (!in_array($userRole, $allowedRoles)) {
-    //            http_response_code(403); // Forbidden
-    //            echo json_encode(["error" => "Unauthorized access"]);
-    //            exit();
-    //        }
-
     // Get the enrollment data from the request body
     $data = json_decode(file_get_contents("php://input"), true);
 
@@ -370,28 +360,65 @@ function handle_enrollment()
     $studentId = mysqli_real_escape_string($conn, $data['student_id']);
     $courseId = mysqli_real_escape_string($conn, $data['course_id']);
 
-    // Check if the student is already enrolled in the course
-    $checkEnrollmentSql = "SELECT * FROM enrollment WHERE student_id = $studentId AND course_id = $courseId";
-    $checkEnrollmentResult = $conn->query($checkEnrollmentSql);
+    // Check if the student exists in the student table
+    $checkStudentSql = "SELECT * FROM student WHERE student_id = ?";
+    $checkStudentStmt = $conn->prepare($checkStudentSql);
+    $checkStudentStmt->bind_param("i", $studentId);
+    $checkStudentStmt->execute();
+    $checkStudentResult = $checkStudentStmt->get_result();
+
+    if ($checkStudentResult->num_rows == 0) {
+        http_response_code(400);
+        echo json_encode(["error" => "Student does not exist"]);
+        $checkStudentStmt->close();
+        exit();
+    }
+
+    // Check if the student is already enrolled in the course using a prepared statement
+    $checkEnrollmentSql = "SELECT * FROM enrollment WHERE student_id = ? AND course_id = ?";
+    $checkEnrollmentStmt = $conn->prepare($checkEnrollmentSql);
+    $checkEnrollmentStmt->bind_param("ii", $studentId, $courseId);
+    $checkEnrollmentStmt->execute();
+    $checkEnrollmentResult = $checkEnrollmentStmt->get_result();
 
     if ($checkEnrollmentResult->num_rows > 0) {
         http_response_code(400);
         echo json_encode(["error" => "Student is already enrolled in the course"]);
+        $checkEnrollmentStmt->close();
         exit();
     }
 
-    // Enroll the student in the course
-    $enrollmentSql = "INSERT INTO enrollment (student_id, course_id, date_enrolled)
-                          VALUES ($studentId, $courseId, NOW())";
+    // Enroll the student in the course using a prepared statement
+    $enrollmentSql = "INSERT INTO enrollment (student_id, course_id, date_enrolled) VALUES (?, ?, NOW())";
+    $enrollmentStmt = $conn->prepare($enrollmentSql);
+    $enrollmentStmt->bind_param("ii", $studentId, $courseId);
 
-    if ($conn->query($enrollmentSql)) {
-        http_response_code(200);
-        echo json_encode(["message" => "Enrollment successful"]);
-    } else {
+    // Check for execution errors
+    if (!$enrollmentStmt->execute()) {
         http_response_code(500);
-        echo json_encode(["error" => "Error enrolling student in the course"]);
+        echo json_encode(["error" => "Error enrolling student in the course. " . $conn->error]);
+        $checkStudentStmt->close();
+        $checkEnrollmentStmt->close();
+        $enrollmentStmt->close();
+        exit();
     }
+
+    // If execution is successful, send a success response
+    http_response_code(200);
+    echo json_encode(["message" => "Enrollment successful"]);
+
+    // Close prepared statements
+    $checkStudentStmt->close();
+    $checkEnrollmentStmt->close();
+    $enrollmentStmt->close();
+
+    // Ensure to exit after sending a response
+    exit();
 }
+
+
+
+
 
 
 
@@ -515,59 +542,76 @@ function handle_teacher_dashboard()
 function handle_teacher_class()
 {
     global $conn;
-     error_log('$_GET array: ' . print_r($_GET, true));
+
     // Fetch teacher details
-    $userId = isset($_GET['user_id']) ? $_GET['user_id'] : '';
-    $courseId = isset($_GET['course_id']) ? $_GET['course_id'] : '';
+    $userId = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
 
-    if ($userId !== '' && $courseId !== '') {
-        // Fetch user details
-        $userSql = "SELECT * FROM user WHERE user_id = $userId";
-        $userResult = $conn->query($userSql);
+    if ($userId > 0) {
+        // Fetch courses taught by the teacher
+        $coursesSql = "SELECT course_id FROM course WHERE user_id = ?";
+        $coursesStmt = $conn->prepare($coursesSql);
+        $coursesStmt->bind_param("i", $userId);
+        $coursesStmt->execute();
+        $coursesResult = $coursesStmt->get_result();
 
-        if ($userResult === false) {
+        if ($coursesResult === false) {
             http_response_code(500); // Internal Server Error
             echo json_encode(["error" => "SQL error: " . $conn->error]);
             return;
         }
 
-        // Fetch students enrolled in the specified course taught by the teacher
-        $enrollmentsSql = "SELECT 
-                student.user_id,
-                student.student_id,
-                user.fullname,
-                student.year_lvl
-            FROM 
-                enrollment
-            JOIN 
-                course ON enrollment.course_id = course.course_id
-            JOIN 
-                student ON enrollment.student_id = student.student_id
-            JOIN 
-                user ON student.user_id = user.user_id
-            WHERE 
-                course.user_id = $userId
-                AND course.course_id = $courseId";
-
-        $enrollmentsResult = $conn->query($enrollmentsSql);
-
-        if ($enrollmentsResult === false) {
-            http_response_code(500); // Internal Server Error
-            echo json_encode(["error" => "SQL error: " . $conn->error]);
-            return;
+        $courseIds = [];
+        while ($courseRow = $coursesResult->fetch_assoc()) {
+            $courseIds[] = $courseRow['course_id'];
         }
 
+        // Fetch students enrolled in the courses taught by the teacher
         $students = [];
-        while ($row = $enrollmentsResult->fetch_assoc()) {
-            $students[] = $row;
+
+        foreach ($courseIds as $courseId) {
+            $enrollmentsSql = "SELECT 
+                    student.user_id,
+                    student.student_id,
+                    user.fullname,
+                    student.year_lvl
+                FROM 
+                    enrollment
+                JOIN 
+                    student ON enrollment.student_id = student.student_id
+                JOIN 
+                    user ON student.user_id = user.user_id
+                WHERE 
+                    enrollment.course_id = ?";
+
+            $enrollmentsStmt = $conn->prepare($enrollmentsSql);
+            $enrollmentsStmt->bind_param("i", $courseId);
+            $enrollmentsStmt->execute();
+            $enrollmentsResult = $enrollmentsStmt->get_result();
+
+            if ($enrollmentsResult === false) {
+                http_response_code(500); // Internal Server Error
+                echo json_encode(["error" => "SQL error: " . $conn->error]);
+                return;
+            }
+
+            while ($row = $enrollmentsResult->fetch_assoc()) {
+                $students[] = $row;
+            }
+
+            $enrollmentsStmt->close();
         }
 
         echo json_encode($students);
+
+        // Close prepared statements
+        $coursesStmt->close();
     } else {
         http_response_code(400); // Bad Request
-        echo json_encode(["error" => "Invalid user_id or courseId parameter"]);
+        echo json_encode(["error" => "Invalid user_id parameter"]);
     }
 }
+
+
 
 
 function handle_create_course()

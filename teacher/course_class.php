@@ -2,9 +2,12 @@
 include '../layout/header_student.php';
 ?>
 
-<section id="courses" class="container-fluid justify-content-md-center col-md-8">
-    <h1>Courses</h1>
-
+<section id="courses" class="container-fluid justify-content-md-center">
+    <div class="row">
+        <div class="col-md-9  mt-4">
+            <h1>Courses</h1>
+        </div>
+    </div>
     <!-- Bootstrap Modal for Enrollment -->
     <div class="modal fade" id="enrollModal" tabindex="-1" role="dialog" aria-labelledby="enrollModalLabel"
         aria-hidden="true">
@@ -62,7 +65,7 @@ include '../layout/header_student.php';
         const userId = '<?php echo $_SESSION['user_id']; ?>';
 
         const urlParams = new URLSearchParams(window.location.search);
-        const courseId = parseInt(urlParams.get('course_id')) || 123;
+        const courseId = parseInt(urlParams.get('course_id')) || 0;
 
         console.log('Current URL:', window.location.href);
 console.log('URL Parameters:', urlParams.toString());
@@ -74,7 +77,7 @@ console.log('courseIdParam:', urlParams.get('course_id'));
 
 
     function fetchAllCourses() {
-        fetch(`../auth/api.php?class&userRole=${userRole}&user_id=${userId}&courseId=${courseId}`, {
+        fetch(`../auth/api.php?class&userRole=${userRole}&user_id=${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -122,7 +125,7 @@ console.log('courseIdParam:', urlParams.get('course_id'));
             cell.appendChild(enrollButton);
 
             row.addEventListener('click', () => {
-                const settingsUrl = '../teacher/courseClass.php';
+                // const settingsUrl = '../teacher/course_class.php';
                 window.location.href = settingsUrl;
             });
             row.style.cursor = 'pointer';
