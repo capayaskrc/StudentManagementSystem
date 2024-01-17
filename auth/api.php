@@ -133,7 +133,7 @@ function handle_login()
     }
 
     // Fetch user details from the database
-    $stmt = $conn->prepare("SELECT user.user_id, user.role_id, user.password, role.role_name
+    $stmt = $conn->prepare("SELECT user.user_id, user.role_id, user.password, role.role_name, user.username
                         FROM user
                         JOIN role ON user.role_id = role.role_id
                         WHERE user.username = ?");
@@ -160,13 +160,13 @@ function handle_login()
 
     if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
-
         // Verify the password using MD5
         if (md5($password) === $row['password']) {
             // Password is correct
+
             $_SESSION['user_id'] = $row['user_id'];
             $_SESSION['role'] = $row['role_name'];
-
+            $_SESSION['username'] = $row['username'];
             // Generate and store the authentication token
             $token = generateAuthToken($row['user_id'], $username, 'your_secret_key');
             $_SESSION['auth_token'] = $token;
@@ -174,6 +174,7 @@ function handle_login()
             $response = [
                 "token" => $token,
                 "role" => $row['role_name'],
+                "username" => $row['username'],
                 "message" => "Login successful"
             ];
             echo json_encode($response);
@@ -335,14 +336,14 @@ function handle_enrollment()
     global $conn;
 
     // Check if the user making the request is a teacher or admin
-//        $allowedRoles = ['teacher', 'admin'];
-//        $userRole = $_SESSION['role'];
-//
-//        if (!in_array($userRole, $allowedRoles)) {
-//            http_response_code(403); // Forbidden
-//            echo json_encode(["error" => "Unauthorized access"]);
-//            exit();
-//        }
+    //        $allowedRoles = ['teacher', 'admin'];
+    //        $userRole = $_SESSION['role'];
+    //
+    //        if (!in_array($userRole, $allowedRoles)) {
+    //            http_response_code(403); // Forbidden
+    //            echo json_encode(["error" => "Unauthorized access"]);
+    //            exit();
+    //        }
 
     // Get the enrollment data from the request body
     $data = json_decode(file_get_contents("php://input"), true);
