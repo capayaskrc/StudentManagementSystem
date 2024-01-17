@@ -35,7 +35,7 @@ switch ($request_method) {
                     handle_student_dashboard();
                     break;
                 case 'teacher':
-                    handle_teacher_dashboard($_GET['user_id']);
+                    handle_teacher_dashboard();
                     break;
                 case 'admin':
                     handle_admin_dashboard();
@@ -56,10 +56,10 @@ switch ($request_method) {
             $userRole = isset($_GET['userRole']) ? $_GET['userRole'] : '';
             switch ($userRole) {
                 case 'student':
-                    // handle_student_class($_GET['user_id']);
+                    handle_student_class($_GET['user_id']);
                     break;
                 case 'teacher':
-                    handle_teacher_class($_GET['user_id'], $_GET['courseId']);
+                    handle_teacher_class();
                     break;
             }
         } else {
@@ -83,16 +83,18 @@ switch ($request_method) {
             echo json_encode(["error" => "Invalid request"]);
         }
         break;
-    case 'DELETE':
-        if (isset($_GET['user']) && isset($_GET['userID'])) {
-            handle_delete_user($_GET['userID']);
-        } elseif (isset($_GET['course']) && isset($_GET['courseID'])) {
-            handle_delete_course($_GET['courseID']);
-        } else {
-            http_response_code(400);
-            echo json_encode(["error" => "Invalid request"]);
-        }
-        break;
+        case 'DELETE':
+            if (isset($_GET['user']) && isset($_GET['userID'])) {
+                handle_delete_user($_GET['userID']);
+            } elseif (isset($_GET['course']) && isset($_GET['courseID'])) {
+                handle_delete_course($_GET['courseID']);
+            } elseif (isset($_GET['unenroll']) && isset($_GET['courseID']) && isset($_GET['studentID'])) {
+                handle_unenroll_student($_GET['courseID'], $_GET['studentID']);
+            } else {
+                http_response_code(400);
+                echo json_encode(["error" => "Invalid request"]);
+            }
+            break;
     default:
         http_response_code(405);
         echo json_encode(["error" => "Invalid request method"]);
@@ -260,6 +262,21 @@ function handle_addUser()
                               VALUES ('$fullName', '$birthdate', '$address', '$sex', '$username', MD5('default123'), $roleId)";
 
         if ($conn->query($sqlInsertUser)) {
+            // Check if the user is a student and insert year level
+            if ($roleName === 'student') {
+                $userId = $conn->insert_id; // Get the ID of the last inserted user
+                $yearLevel = mysqli_real_escape_string($conn, $data['yearLevel']);
+
+                // Insert the year level into the "student" table
+                $sqlInsertStudent = "INSERT INTO student (user_id, year_lvl) VALUES ($userId, '$yearLevel')";
+
+                if (!$conn->query($sqlInsertStudent)) {
+                    http_response_code(500); // Internal Server Error
+                    echo json_encode(["error" => "Error adding student information to the database"]);
+                    exit();
+                }
+            }
+
             http_response_code(201); // Created
             echo json_encode(["message" => "User added successfully"]);
         } else {
@@ -276,6 +293,7 @@ function handle_addUser()
     $stmtRole->close();
     $stmtCheckUser->close();
 }
+
 
 function handle_delete_user($userId)
 {
@@ -353,7 +371,7 @@ function handle_enrollment()
     $courseId = mysqli_real_escape_string($conn, $data['course_id']);
 
     // Check if the student is already enrolled in the course
-    $checkEnrollmentSql = "SELECT * FROM Enrollment WHERE student_id = $studentId AND course_id = $courseId";
+    $checkEnrollmentSql = "SELECT * FROM enrollment WHERE student_id = $studentId AND course_id = $courseId";
     $checkEnrollmentResult = $conn->query($checkEnrollmentSql);
 
     if ($checkEnrollmentResult->num_rows > 0) {
@@ -363,7 +381,7 @@ function handle_enrollment()
     }
 
     // Enroll the student in the course
-    $enrollmentSql = "INSERT INTO Enrollment (student_id, course_id, date_enrolled)
+    $enrollmentSql = "INSERT INTO enrollment (student_id, course_id, date_enrolled)
                           VALUES ($studentId, $courseId, NOW())";
 
     if ($conn->query($enrollmentSql)) {
@@ -497,27 +515,24 @@ function handle_teacher_dashboard()
 function handle_teacher_class()
 {
     global $conn;
-
+     error_log('$_GET array: ' . print_r($_GET, true));
     // Fetch teacher details
     $userId = isset($_GET['user_id']) ? $_GET['user_id'] : '';
-    $courseId = isset($_GET['courseId']) ? $_GET['courseId'] : '';
+    $courseId = isset($_GET['course_id']) ? $_GET['course_id'] : '';
 
-    if ($userId !== '') {
-        $sql = "SELECT * FROM user WHERE user_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $userId); // Assuming user_id is an integer
-        $stmt->execute();
-        $result = $stmt->get_result();
+    if ($userId !== '' && $courseId !== '') {
+        // Fetch user details
+        $userSql = "SELECT * FROM user WHERE user_id = $userId";
+        $userResult = $conn->query($userSql);
 
-
-        if ($result === false) {
-            // Handle the SQL error
+        if ($userResult === false) {
             http_response_code(500); // Internal Server Error
             echo json_encode(["error" => "SQL error: " . $conn->error]);
             return;
         }
 
-        $sql = "SELECT 
+        // Fetch students enrolled in the specified course taught by the teacher
+        $enrollmentsSql = "SELECT 
                 student.user_id,
                 student.student_id,
                 user.fullname,
@@ -531,47 +546,26 @@ function handle_teacher_class()
             JOIN 
                 user ON student.user_id = user.user_id
             WHERE 
-                course.user_id = ?
-                AND course.course_id = ?";
+                course.user_id = $userId
+                AND course.course_id = $courseId";
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $userId, $courseId); // Assuming user_id and course_id are integers
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $enrollmentsResult = $conn->query($enrollmentsSql);
 
-        if ($result === false) {
-            // Handle the SQL error
-            return ["error" => "SQL error: " . $conn->error];
+        if ($enrollmentsResult === false) {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "SQL error: " . $conn->error]);
+            return;
         }
 
         $students = [];
-        while ($row = $result->fetch_assoc()) {
+        while ($row = $enrollmentsResult->fetch_assoc()) {
             $students[] = $row;
         }
-
-        // Fetch students enrolled in each course taught by the teacher
-        // foreach ($courses as &$course) {
-        //     $courseId = $course['course_id'];
-        //     $sqlEnrollments = "SELECT User.fullname, Enrollment.date_enrolled
-        //                        FROM Enrollment
-        //                        JOIN User ON Enrollment.student_id = User.user_id
-        //                        WHERE Enrollment.course_id = $courseId";
-
-        //     $resultEnrollments = $conn->query($sqlEnrollments);
-
-        //     if ($resultEnrollments->num_rows > 0) {
-        //         $enrollments = [];
-        //         while ($row = $resultEnrollments->fetch_assoc()) {
-        //             $enrollments[] = $row;
-        //         }
-        //         $course['enrollments'] = $enrollments;
-        //     }
-        // }
 
         echo json_encode($students);
     } else {
         http_response_code(400); // Bad Request
-        echo json_encode(["error" => "Invalid user_id parameter"]);
+        echo json_encode(["error" => "Invalid user_id or courseId parameter"]);
     }
 }
 
@@ -874,7 +868,7 @@ function handle_delete_course($courseID)
         echo json_encode(["message" => "Course deleted successfully"]);
     } else {
         http_response_code(500); // Internal Server Error
-        echo json_encode(["error" => "Error deleting course"]);
+        echo json_encode(["error" => "Error deleting course: " . $stmtDeleteCourse->error]);
     }
 
     // Close the statement
@@ -934,6 +928,30 @@ function handle_assign_instructor($courseID, $instructorID)
 
     // Close the statement
     $stmtAssignInstructor->close();
+}
+
+function handle_unenroll_student($courseID, $studentID)
+{
+    global $conn;
+
+    // Check if the user making the request is authorized (e.g., admin)
+    // Add your authorization logic here
+
+    // Delete the student from the course (unenrollment)
+    $sqlDeleteEnrollment = "DELETE FROM enrollment WHERE course_id = ? AND student_id = ?";
+    $stmtDeleteEnrollment = $conn->prepare($sqlDeleteEnrollment);
+    $stmtDeleteEnrollment->bind_param("ii", $courseID, $studentID);
+
+    if ($stmtDeleteEnrollment->execute()) {
+        http_response_code(200); // OK
+        echo json_encode(["message" => "Student unenrolled successfully"]);
+    } else {
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Error unenrolling student"]);
+    }
+
+    // Close the statement
+    $stmtDeleteEnrollment->close();
 }
 
 

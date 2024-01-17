@@ -62,7 +62,11 @@ include '../layout/header_student.php';
         const userId = '<?php echo $_SESSION['user_id']; ?>';
 
         const urlParams = new URLSearchParams(window.location.search);
-        const courseId = parseInt(urlParams.get('course_id'));
+        const courseId = parseInt(urlParams.get('course_id')) || 123;
+
+        console.log('Current URL:', window.location.href);
+console.log('URL Parameters:', urlParams.toString());
+console.log('courseIdParam:', urlParams.get('course_id'));
 
         document.addEventListener("DOMContentLoaded", function () {
         fetchAllCourses();

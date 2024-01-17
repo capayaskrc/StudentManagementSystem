@@ -254,28 +254,38 @@
     }
 
     function deleteCourse(courseId) {
-        if (confirm("Are you sure you want to delete this course?")) {
-            fetch(`../auth/api.php?course&courseID=${courseId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to delete course');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    fetchAllCourses(); // Refresh the course list after deleting a course
-                })
-                .catch(error => {
-                    console.error('Error deleting course:', error);
-                    // Handle error as needed (e.g., display an error message to the user)
-                });
-        }
+    if (confirm("Are you sure you want to delete this course?")) {
+        fetch(`../auth/api.php?course&courseID=${courseId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Check if the response contains JSON data
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json().then(errorData => {
+                        throw new Error(`Failed to delete course: ${errorData.error}`);
+                    });
+                } else {
+                    throw new Error('Failed to delete course: Unexpected response from the server.');
+                }
+            }
+            return response.json();
+        })
+        .then(data => {
+            fetchAllCourses(); // Refresh the course list after deleting a course
+        })
+        .catch(error => {
+            console.error('Error deleting course:', error.message);
+            // Handle error as needed (e.g., display an error message to the user)
+            alert(error.message);
+        });
     }
+}
+
 
     function enrollStudent() {
     const courseId = document.getElementById("enrollModalCourseId").value;
