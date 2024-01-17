@@ -122,7 +122,6 @@
                 // Handle error as needed (e.g., display an error message to the user)
             });
     }
-
     handleUserSettings();
 
     // Submit handler for the change password form

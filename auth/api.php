@@ -772,11 +772,43 @@ function handle_user_settings()
 {
     global $conn;
 
-    $userId = $_SESSION['user_id'];
+    // Enable error reporting for debugging
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
 
-    // Fetch user details
-    $sql = "SELECT * FROM users WHERE id = $userId";
-    $result = $conn->query($sql);
+    // Validate and sanitize the user_id parameter
+    $userId = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
+
+    if ($userId <= 0) {
+        // Invalid user_id provided
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "Invalid user_id"]);
+        return;
+    }
+
+    // Fetch user details using a prepared statement
+    $sql = "SELECT * FROM user WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        // If the preparation fails, handle the error
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Failed to prepare statement: " . $conn->error]);
+        return;
+    }
+
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+
+    if ($stmt->errno) {
+        // If an error occurs during execution, handle the error
+        http_response_code(500); // Internal Server Error
+        echo json_encode(["error" => "Statement execution failed: " . $stmt->error]);
+        $stmt->close();
+        return;
+    }
+
+    $result = $stmt->get_result();
 
     if ($result->num_rows == 1) {
         $userDetails = $result->fetch_assoc();
@@ -785,7 +817,12 @@ function handle_user_settings()
         http_response_code(404); // Not Found
         echo json_encode(["error" => "User not found"]);
     }
+
+    $stmt->close();
 }
+
+
+
 
 
 function handle_getAllCourses() {

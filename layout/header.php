@@ -9,7 +9,7 @@ $settingsUrl = '../' . $_SESSION['role'] . '/settings.php';
         <div class="logout">
             <div class="user-dropdown">
                 <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" data-bs-bs-target="#" aria-expanded="false">
-                    <span class="me-2" style="color: white;"><?php echo 'YOUR PROFILE'; ?></span>
+                    <span class="me-2" style="color: white;"><?php echo  $_SESSION['username']; ?></span>
                 </a>
                 <ul class="dropdown-menu text-small">
                     <a class="dropdown-item" href="<?php echo $settingsUrl; ?>">Settings</a>
