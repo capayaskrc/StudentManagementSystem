@@ -1,7 +1,7 @@
 <?php
 include '../layout/header_student.php';
 ?>
-
+    <section>
     <div class="container-fluid justify-content-md-center">
     <h1>Courses</h1>
     <!-- Bootstrap Modal for Enrollment -->
