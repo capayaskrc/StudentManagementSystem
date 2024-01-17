@@ -428,7 +428,7 @@ function handle_student_dashboard()
     global $conn;
 
     // Fetch student details
-    $userId = $_SESSION['user_id'];
+    $userId = isset($_GET['user_id']) ? $_GET['user_id'] : '';
     $sql = "SELECT * FROM user WHERE user_id = $userId";
     $result = $conn->query($sql);
 
@@ -451,14 +451,28 @@ function handle_student_dashboard()
                         WHERE 
                             s.user_id = $userId;";
 
+        error_log($sqlCourses);  // Print the SQL query to the error log
+
         $resultCourses = $conn->query($sqlCourses);
+
+        if ($resultCourses === false) {
+            http_response_code(500); // Internal Server Error
+            echo json_encode(["error" => "SQL error: " . $conn->error]);
+            return;
+        }
 
         if ($resultCourses->num_rows > 0) {
             $courses = [];
             while ($row = $resultCourses->fetch_assoc()) {
-                $courses[] = $row;
+                $courses[] = [
+                    'course_id' => $row['course_id'],
+                    'course_name' => $row['course_name'],
+                    'grade' => $row['grade'],
+                ];
             }
-            $student['courses'] = $courses;
+            $student['enrolled_courses'] = $courses;
+        } else {
+            $student['enrolled_courses'] = []; // No enrolled courses
         }
 
         echo json_encode($student);
@@ -467,6 +481,8 @@ function handle_student_dashboard()
         echo json_encode(["error" => "Student not found"]);
     }
 }
+
+
 
 
 function handle_teacher_dashboard()

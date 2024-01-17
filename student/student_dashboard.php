@@ -2,7 +2,7 @@
 include '../layout/header_student.php';
 ?>
 
-
+    <div class="container-fluid justify-content-md-center">
     <h1>Courses</h1>
     <!-- Bootstrap Modal for Enrollment -->
     <div class="modal fade" id="enrollModal" tabindex="-1" role="dialog" aria-labelledby="enrollModalLabel"
@@ -52,6 +52,7 @@ include '../layout/header_student.php';
             </tbody>
         </table>
     </div>
+    </div>
 </section>
 
     <script>
@@ -92,7 +93,7 @@ include '../layout/header_student.php';
         const tbody = courseTable.getElementsByTagName('tbody')[0];
         tbody.innerHTML = ''; // Clear existing rows
 
-        student_data.courses.forEach(course => {
+        student_data.enrolled_courses.forEach(course => {
             const row = tbody.insertRow();
             row.insertCell(0).textContent = course.course_id;
             row.insertCell(1).textContent = course.course_name;
